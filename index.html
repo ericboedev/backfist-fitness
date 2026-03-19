@@ -342,6 +342,43 @@ function renderModal(){
   return"";
 }
 
+function startPlanWorkout(encoded){
+  const d = JSON.parse(decodeURIComponent(encoded));
+  // Match plan exercise names to library exercises
+  const matched = [];
+  d.exercises.forEach(function(exName){
+    // Strip superset notation like "1. X → Y" — extract both parts
+    const parts = exName.replace(/^\d+\.\s*/,'').split(' → ');
+    parts.forEach(function(part){
+      const name = part.trim();
+      const found = S.exercises.find(function(e){
+        return e.name.toLowerCase().includes(name.toLowerCase()) ||
+               name.toLowerCase().includes(e.name.toLowerCase());
+      });
+      if(found && !matched.find(function(m){return m.id===found.id;})){
+        matched.push({id:found.id,name:found.name,sets:found.default_sets,reps:found.default_reps});
+      } else if(!found) {
+        // Add as custom entry even if not in library
+        matched.push({id:'plan_'+Date.now()+'_'+Math.random(),name:name,sets:3,reps:'10'});
+      }
+    });
+  });
+  // Determine session type from focus
+  const typeMap = {'Push':'Push','Pull':'Pull','Legs':'Legs','Core':'Core',
+    'Push / Pull':'Push / Pull','Legs / Core':'Legs / Core','Full':'Full Body','Circuit':'Full Body','BJJ':'BJJ / MMA'};
+  const lType = typeMap[d.focus] || 'Full Body';
+  ss({
+    tab:'log',
+    modal:'newLog',
+    lDate:new Date().toISOString().slice(0,10),
+    lDuration:'30',
+    lType:lType,
+    lExs:matched,
+    lNotes:'',
+    lFeel:'Good'
+  });
+}
+
 function handleAdd(){if(S.tab==="log")ss({modal:"newLog",lDate:new Date().toISOString().slice(0,10),lDuration:"30",lType:"Push / Pull",lExs:[],lNotes:"",lFeel:"Good"});else if(S.tab==="exercises")ss({modal:"addEx",editEx:null,fName:"",fCat:"Push",fLevel:"First Class",fSets:"3",fReps:"10",fNotes:""});}
 function openEditEx(id){const ex=S.exercises.find(e=>e.id===id);if(!ex)return;ss({modal:"editEx",editEx:ex,fName:ex.name,fCat:ex.category,fLevel:ex.level,fSets:String(ex.default_sets),fReps:ex.default_reps,fNotes:ex.notes||""});}
 function saveEx(){const{fName,fCat,fLevel,fSets,fReps,fNotes,editEx:ee,exercises}=S;if(!fName.trim())return;const entry={id:ee?.id||"c"+Date.now(),name:fName.trim(),category:fCat,level:fLevel,default_sets:parseInt(fSets)||3,default_reps:fReps,notes:fNotes,custom:true};const u=ee?exercises.map(e=>e.id===ee.id?entry:e):[...exercises,entry];save("bf2_ex",u);ss({exercises:u,modal:null});}
@@ -597,10 +634,13 @@ function renderPlan(){
     html += "<strong style=\"color:var(--text)\">Method:</strong> "+(METHOD_EXPLAINERS[w.method]||w.method);
     html += "</div>";
     w.days.forEach(function(d){
-      html += "<div class=\"card\" style=\"margin-bottom:7px;cursor:default\">";
-      html += "<div style=\"display:flex;align-items:center;gap:8px;margin-bottom:8px\">";
+      html += "<div class=\"card\" style=\"margin-bottom:7px\">";
+      html += "<div style=\"display:flex;align-items:center;justify-content:space-between;margin-bottom:8px\">";
+      html += "<div style=\"display:flex;align-items:center;gap:8px\">";
       html += "<span style=\"font-size:13px;font-weight:700\">"+d.label+"</span>";
       html += "<span class=\"tag "+(FOCUS_COLOR[d.focus]||"t-neu")+"\">"+d.focus+"</span>";
+      html += "</div>";
+      html += "<button onclick=\"startPlanWorkout('"+encodeURIComponent(JSON.stringify(d))+"')\" style=\"padding:5px 11px;border-radius:20px;border:1px solid var(--border2);background:var(--text);color:var(--bg);font-size:11px;font-weight:600;cursor:pointer\">Start</button>";
       html += "</div>";
       html += "<div style=\"display:flex;flex-direction:column;gap:4px\">";
       d.exercises.forEach(function(e){
