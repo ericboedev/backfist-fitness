@@ -167,6 +167,23 @@ const EX=[
   {id:"c10",name:"Back Extension",category:"Core",level:"Master Class",default_sets:3,default_reps:"15",notes:"Rückenheber"},
   {id:"c11",name:"Hanging Leg Raise",category:"Core",level:"Chief Class",default_sets:3,default_reps:"10",notes:"Hängendes Beinheben"},
   {id:"c12",name:"Mountain Climber",category:"Core",level:"Chief Class",default_sets:3,default_reps:"20",notes:"Bergsteiger"},
+  {id:"c13",name:"Crunch It Up",category:"Core",level:"First Class",default_sets:3,default_reps:"15",notes:"Crunch It Up"},
+  {id:"c14",name:"Beach Scissors",category:"Core",level:"First Class",default_sets:3,default_reps:"15",notes:"Strandschere"},
+  {id:"c15",name:"Hip Raise (Superman)",category:"Core",level:"Beginner",default_sets:3,default_reps:"15",notes:"Strecken — Hände unter dem Kinn"},
+  {id:"c16",name:"Oblique V-Up",category:"Core",level:"Master Class",default_sets:3,default_reps:"12",notes:"Schräger V-Up"},
+  {id:"l16",name:"Good Mornings",category:"Legs",level:"Beginner",default_sets:3,default_reps:"15",notes:"Good Mornings — hold at bottom"},
+  {id:"l17",name:"Pogo Jumps",category:"Legs",level:"Beginner",default_sets:3,default_reps:"20",notes:"Pogo-Sprünge"},
+  {id:"l18",name:"Stretched Squat",category:"Legs",level:"Chief Class",default_sets:3,default_reps:"8",notes:"Gestreckte Kniebeuge — object overhead"},
+  {id:"l19",name:"Flying Spread Eagle",category:"Legs",level:"Intermediate",default_sets:3,default_reps:"12",notes:"Fliegende Grätsche — on table edge"},
+  {id:"p13",name:"Thumbs Up",category:"Push",level:"First Class",default_sets:3,default_reps:"12",notes:"Daumen hoch — shoulder press variation"},
+  {id:"p14",name:"Double Clap Push-up",category:"Push",level:"First Class",default_sets:3,default_reps:"8",notes:"Doppelter Liegestützsprung"},
+  {id:"p15",name:"Plyometric Push-up",category:"Push",level:"Master Class",default_sets:3,default_reps:"8",notes:"Federnder Liegestütz"},
+  {id:"p16",name:"Elevated Tricep Extension",category:"Push",level:"Master Class",default_sets:3,default_reps:"10",notes:"Erhöhter Trizepsstrecker — hip-high"},
+  {id:"b1",name:"BJJ Guard Pass Drill",category:"BJJ",level:"Beginner",default_sets:3,default_reps:"10",notes:"Hip mobility and guard passing movement"},
+  {id:"b2",name:"BJJ Hip Escape (Shrimp)",category:"BJJ",level:"Beginner",default_sets:3,default_reps:"10",notes:"Granby roll / shrimping drill"},
+  {id:"b3",name:"BJJ Sprawl",category:"BJJ",level:"Beginner",default_sets:3,default_reps:"10",notes:"Takedown defense sprawl"},
+  {id:"b4",name:"BJJ Bridge & Roll",category:"BJJ",level:"Beginner",default_sets:3,default_reps:"10",notes:"Escape from mount — Upa"},
+  {id:"b5",name:"BJJ Technical Stand-up",category:"BJJ",level:"Beginner",default_sets:3,default_reps:"10",notes:"Get-up from ground — base position"},
 ];
 
 function load(k,fb){try{const s=localStorage.getItem(k);return s?JSON.parse(s):fb;}catch{return fb;}}
@@ -178,7 +195,7 @@ let S={
   logs:load("bf2_logs",[]),
   exCat:"All",exSearch:"",
   modal:null,editEx:null,viewLog:null,
-  planLevel:"First Class",
+  planLevel:"Basis",
   fName:"",fCat:"Push",fLevel:"First Class",fSets:"3",fReps:"10",fNotes:"",
   lDate:new Date().toISOString().slice(0,10),
   lDuration:"30",lType:"Push / Pull",lExs:[],lNotes:"",lFeel:"Good",
@@ -338,15 +355,65 @@ function delLog(id){if(!confirm("Delete workout?"))return;const u=S.logs.filter(
 
 // ── PROGRAM DATA ──────────────────────────────────────────────────────────────
 const PROGRAMS = {
+  "Basis": {
+    weeks: [
+      { range:"Weeks 1–2", block:"Muscular Endurance", method:"Step Intervals", days:[
+        {label:"Day 1",focus:"Push / Pull",exercises:["Push-up (hands elevated)","Door Row","Bench Dips","Reverse Row (knees bent)"]},
+        {label:"Day 2",focus:"Legs / Core",exercises:["Reverse Lunge (alternating)","Single-leg RDL","Squat","Swimmer"]},
+        {label:"Day 3",focus:"Push / Pull",exercises:["Push-up (hands elevated)","Door Row","Bench Dips","Reverse Row (knees bent)"]},
+        {label:"Day 4",focus:"Legs / Core",exercises:["Lateral Lunge","Single-leg RDL","Squat +hold","Oblique Crunch"]},
+      ]},
+      { range:"Weeks 3–4", block:"Strength", method:"Interval Sets (3×6–12 reps, 3 min intervals)", days:[
+        {label:"Day 1",focus:"Push",exercises:["Full Push-up","Military Press","Close-grip Push-up (elevated)","Bench Dips"]},
+        {label:"Day 2",focus:"Legs",exercises:["Bulgarian Split Squat","Lateral Lunge (elevated)","Squat +hold","Single-leg RDL on cushion"]},
+        {label:"Day 3",focus:"Pull",exercises:["Door Row","Reverse Row (knees bent)","Underhand Door Row","Towel Curl"]},
+        {label:"Day 4",focus:"Core",exercises:["Leg Raise","Superman (chin hold)","Russian Twist","Swimmer"]},
+      ]},
+      { range:"Weeks 5–6", block:"Power", method:"Supersets (4 min intervals, 3 pairs/day)", days:[
+        {label:"Day 1",focus:"Push",exercises:["1. Feet Elevated Push-up → Explosive Push-up","2. Military Press → Thumbs Up","3. Close-grip Push-up → Bench Dips"]},
+        {label:"Day 2",focus:"Legs",exercises:["1. Reverse Lunge +hold → Jump Squat","2. Forward Lunge +hold → Lateral Lunge","3. Single-leg RDL on cushion → Pogo Jumps"]},
+        {label:"Day 3",focus:"Pull",exercises:["1. Assisted Pull-up → Door Row","2. Door Row +hold → Reverse Row (straight)","3. Reverse Row (underhand, straight) → Door Row"]},
+        {label:"Day 4",focus:"Core",exercises:["1. V-Up → Russian Twist","2. Superman → Swimmer","3. Hanging Leg Raise (bent) → Leg Raise"]},
+      ]},
+      { range:"Week 7", block:"Rotation Block", method:"Day 1: Steps · Day 2: Supersets · Day 3: Intervals · Day 4: HIIT · Day 5: Circuit", days:[
+        {label:"Day 1 (Steps)",focus:"Push",exercises:["Military Press (elevated)","Full Push-up (elevated)","Close-grip Push-up (elevated)","Bench Dips +hold"]},
+        {label:"Day 2 (Super)",focus:"Legs",exercises:["1. Reverse Lunge +hold → Jump Squat","2. Forward Lunge → Lateral Lunge","3. Single-leg RDL on cushion → Pogo Jumps"]},
+        {label:"Day 3 (Intervals)",focus:"Pull",exercises:["Door Row","Reverse Row (knees bent)","Underhand Door Row","Towel Curl"]},
+        {label:"Day 4 (HIIT)",focus:"Core",exercises:["Russian Twist","Scissor Crunch","Knee Raise (standing)","Swimmer"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["10 Reverse Lunges","8× Door Row","6 Push-ups"]},
+      ]},
+      { range:"Week 8", block:"Rotation Block", method:"Day 1: HIIT · Day 2: Steps · Day 3: Supersets · Day 4: Intervals · Day 5: Circuit", days:[
+        {label:"Day 1 (HIIT)",focus:"Push",exercises:["Push-up (chest elevated)","Rocking Chair Push-up","Double Clap Push-up"]},
+        {label:"Day 2 (Steps)",focus:"Legs",exercises:["Reverse Lunge","Single-leg RDL","Squat +hold","Good Mornings +hold"]},
+        {label:"Day 3 (Super)",focus:"Pull",exercises:["1. Assisted Pull-up → Door Row","2. Door Row +hold → Reverse Row","3. Reverse Row (straight) → Underhand Row"]},
+        {label:"Day 4 (Intervals)",focus:"Core",exercises:["Leg Raise","Superman (chin hold)","Russian Twist","Swimmer"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["10 Reverse Lunges","8× Door Row","6 Push-ups"]},
+      ]},
+      { range:"Week 9", block:"Rotation Block", method:"Day 1: Intervals · Day 2: HIIT · Day 3: Steps · Day 4: Supersets · Day 5: Circuit", days:[
+        {label:"Day 1 (Intervals)",focus:"Push",exercises:["Feet Elevated Push-up","Military Press","Close-grip Push-up (elevated)","Bench Dips"]},
+        {label:"Day 2 (HIIT)",focus:"Legs",exercises:["Beat Your Boots","Reverse Lunge","Good Mornings","Squat"]},
+        {label:"Day 3 (Steps)",focus:"Pull",exercises:["Reverse Row (knees bent)","Door Row","Reverse Row (underhand, knees bent)","Underhand Door Row"]},
+        {label:"Day 4 (Super)",focus:"Core",exercises:["1. V-Up → Russian Twist","2. Superman → Swimmer","3. Bicycle Crunch → Leg Raise"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["10 Reverse Lunges","8× Door Row","6 Push-ups"]},
+      ]},
+      { range:"Week 10", block:"Rotation Block", method:"Day 1: Supersets · Day 2: Intervals · Day 3: HIIT · Day 4: Steps · Day 5: Circuit", days:[
+        {label:"Day 1 (Super)",focus:"Push",exercises:["1. Feet Elevated Push-up +hold → Explosive Push-up","2. Military Press → Overhead Press","3. Close-grip Push-up → Bench Dips (feet elevated)"]},
+        {label:"Day 2 (Intervals)",focus:"Legs",exercises:["Bulgarian Split Squat","Lateral Lunge +hold","Jump Squat +hold","Single-leg RDL on cushion"]},
+        {label:"Day 3 (HIIT)",focus:"Pull",exercises:["Door Row","Flying Spread Eagle","Reverse Row (straight)","Swimmer"]},
+        {label:"Day 4 (Steps)",focus:"Core",exercises:["Bicycle Crunch","Superman (arms tight)","Leg Raise","Swimmer"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["10 Reverse Lunges","8× Door Row","6 Push-ups"]},
+      ]},
+    ]
+  },
   "First Class": {
     weeks: [
       { range:"Weeks 1–2", block:"Muscular Endurance", method:"Step Intervals", days:[
         {label:"Day 1",focus:"Push / Pull",exercises:["Full Push-up","Reverse Row (straight legs)","Military Press","Door Row"]},
-        {label:"Day 2",focus:"Legs / Core",exercises:["Reverse Lunge (alternating) +hold","Single-leg RDL","Jump Squat +hold","Superman"]},
+        {label:"Day 2",focus:"Legs / Core",exercises:["Reverse Lunge +hold","Single-leg RDL","Jump Squat +hold","Superman"]},
         {label:"Day 3",focus:"Push / Pull",exercises:["Full Push-up","Reverse Row (straight legs)","Military Press","Door Row"]},
         {label:"Day 4",focus:"Legs / Core",exercises:["Lateral Lunge +hold","Single-leg RDL","Jump Squat +hold","Russian Twist"]},
       ]},
-      { range:"Weeks 3–4", block:"Strength", method:"Interval Sets (3×6–12 reps, 3 min intervals)", days:[
+      { range:"Weeks 3–4", block:"Strength", method:"Interval Sets (3x6-12 reps, 3 min intervals)", days:[
         {label:"Day 1",focus:"Push",exercises:["Feet Elevated Push-up","Military Press","Close-grip Push-up (elevated)","Bench Dips"]},
         {label:"Day 2",focus:"Legs",exercises:["Bulgarian Split Squat +hold","Lateral Lunge +hold","Jump Squat +hold","Single-leg RDL on cushion"]},
         {label:"Day 3",focus:"Pull",exercises:["Assisted Pull-up (eccentric)","Reverse Row (straight legs)","Door Row","Towel Curl"]},
@@ -362,29 +429,29 @@ const PROGRAMS = {
         {label:"Day 1 (Steps)",focus:"Push",exercises:["One-arm Push-up (elevated)","Full Push-up","Close-grip Push-up (elevated)","Bench Dips"]},
         {label:"Day 2 (Super)",focus:"Legs",exercises:["1. Single-leg Squat → Jump Squat +hold","2. Lateral Lunge → Reverse Lunge","3. Single-leg RDL on cushion → Box Jump"]},
         {label:"Day 3 (Intervals)",focus:"Pull",exercises:["Assisted Pull-up","Reverse Row","Door Row","Towel Curl"]},
-        {label:"Day 4 (HIIT)",focus:"Core",exercises:["Russian Twist","Scissor Crunch","Knee Raise standing","Bicycle Crunch"]},
-        {label:"Day 5 (Circuit)",focus:"Full",exercises:["6× Door Row (bent knee)","12 Lateral Lunges","8× Door Row","6 Push-ups"]},
+        {label:"Day 4 (HIIT)",focus:"Core",exercises:["Russian Twist","Scissor Crunch","Knee Raise (standing)","Bicycle Crunch"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["6x Door Row (bent knee)","12 Lateral Lunges","8x Door Row","6 Push-ups"]},
       ]},
       { range:"Week 8", block:"Rotation Block", method:"Day 1: HIIT · Day 2: Steps · Day 3: Supersets · Day 4: Intervals · Day 5: Circuit", days:[
-        {label:"Day 1 (HIIT)",focus:"Push",exercises:["Push-up (chest elevated)","Rocking Chair","Double Clap Push-up"]},
+        {label:"Day 1 (HIIT)",focus:"Push",exercises:["Push-up (chest elevated)","Rocking Chair Push-up","Double Clap Push-up"]},
         {label:"Day 2 (Steps)",focus:"Legs",exercises:["Reverse Lunge","Single-leg RDL","Squat +hold","Good Mornings +hold"]},
         {label:"Day 3 (Super)",focus:"Pull",exercises:["1. Assisted Pull-up → Door Row","2. Door Row +hold → Reverse Row","3. Reverse Row (straight legs) → Underhand Row"]},
-        {label:"Day 4 (Intervals)",focus:"Core",exercises:["Leg Raise","Superman (chin)","Russian Twist","Swimmer"]},
-        {label:"Day 5 (Circuit)",focus:"Full",exercises:["10 Reverse Lunges","8× Door Row","6 Push-ups"]},
+        {label:"Day 4 (Intervals)",focus:"Core",exercises:["Leg Raise","Superman (chin hold)","Russian Twist","Swimmer"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["10 Reverse Lunges","8x Door Row","6 Push-ups"]},
       ]},
       { range:"Week 9", block:"Rotation Block", method:"Day 1: Intervals · Day 2: HIIT · Day 3: Steps · Day 4: Supersets · Day 5: Circuit", days:[
         {label:"Day 1 (Intervals)",focus:"Push",exercises:["Feet Elevated Push-up","Military Press (elevated)","Close-grip Push-up (elevated)","Bench Dips"]},
         {label:"Day 2 (HIIT)",focus:"Legs",exercises:["Iron Mike","Lateral Jump","Squat","Single-leg RDL on cushion"]},
         {label:"Day 3 (Steps)",focus:"Pull",exercises:["Reverse Row (bent knee)","Door Row","Reverse Row (feet elevated)","Underhand Row"]},
         {label:"Day 4 (Super)",focus:"Core",exercises:["1. Hanging Leg Raise → Knee Twist","2. Single-leg Hip Extension → Superman","3. V-Up → Russian Twist"]},
-        {label:"Day 5 (Circuit)",focus:"Full",exercises:["6× Door Row (bent knee)","12 Lateral Lunges","8× Door Row","6 Push-ups"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["6x Door Row (bent knee)","12 Lateral Lunges","8x Door Row","6 Push-ups"]},
       ]},
       { range:"Week 10", block:"Rotation Block", method:"Day 1: Supersets · Day 2: Intervals · Day 3: HIIT · Day 4: Steps · Day 5: Circuit", days:[
         {label:"Day 1 (Super)",focus:"Push",exercises:["1. Feet Elevated Push-up +hold → Explosive Push-up","2. Military Press → Overhead Press","3. Close-grip Push-up → Bench Dips (feet elevated)"]},
         {label:"Day 2 (Intervals)",focus:"Legs",exercises:["Bulgarian Split Squat","Lateral Lunge +hold","Jump Squat +hold","Single-leg RDL on cushion"]},
-        {label:"Day 3 (HIIT)",focus:"Pull",exercises:["Door Row","Flying Spread Eagle","Reverse Row","Swimmer"]},
+        {label:"Day 3 (HIIT)",focus:"Pull",exercises:["Door Row","Flying Spread Eagle","Reverse Row (straight)","Swimmer"]},
         {label:"Day 4 (Steps)",focus:"Core",exercises:["Bicycle Crunch","Superman (arms tight)","Leg Raise","Swimmer"]},
-        {label:"Day 5 (Circuit)",focus:"Full",exercises:["6× Door Row (bent knee)","12 Lateral Lunges","8× Door Row","6 Push-ups"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["6x Door Row (bent knee)","12 Lateral Lunges","8x Door Row","6 Push-ups"]},
       ]},
     ]
   },
@@ -396,7 +463,7 @@ const PROGRAMS = {
         {label:"Day 3",focus:"Push / Pull",exercises:["One-arm Push-up (hand elevated)","Eccentric Pull-up","Military Press","Door Row"]},
         {label:"Day 4",focus:"Legs / Core",exercises:["Reverse Lunge +hold","Single-leg RDL on cushion","Hip Extension","Knee Twist"]},
       ]},
-      { range:"Weeks 3–4", block:"Strength", method:"Interval Sets (3×6–12 reps, 3 min intervals)", days:[
+      { range:"Weeks 3–4", block:"Strength", method:"Interval Sets (3x6-12 reps, 3 min intervals)", days:[
         {label:"Day 1",focus:"Push",exercises:["One-arm Push-up (hand elevated)","Dive Bomber Push-up","Pike Push-up (feet elevated)","Tricep Dip"]},
         {label:"Day 2",focus:"Legs",exercises:["Single-leg Squat (assisted)","Bulgarian Split Squat +hold","Lateral Lunge +hold","Single-leg Hip Extension"]},
         {label:"Day 3",focus:"Pull",exercises:["Eccentric Pull-up","Door Row +hold","Reverse Row (feet elevated)","Reverse Row (underhand, feet elevated)"]},
@@ -408,12 +475,83 @@ const PROGRAMS = {
         {label:"Day 3",focus:"Pull",exercises:["1. Eccentric Pull-up → Door Row","2. One-arm Door Row → Reverse Row (underhand)","3. Underhand Row +hold → Towel Curl"]},
         {label:"Day 4",focus:"Core",exercises:["1. Hanging Leg Raise → Bicycle Crunch","2. Back Extension → Superman","3. V-Up → Knee Twist"]},
       ]},
-      { range:"Weeks 7–10", block:"Rotation Block", method:"5 days/week — rotating methods each day", days:[
-        {label:"Day 1",focus:"Push",exercises:["One-arm Push-up (elevated)","Dive Bomber","Tricep Dip","Bench Dip +hold"]},
-        {label:"Day 2",focus:"Legs",exercises:["Pistol / Single-leg Squat","Sissy Squat","Lateral Lunge +hold","Hip Extension"]},
-        {label:"Day 3",focus:"Pull",exercises:["Eccentric Pull-up","Door Row +hold","One-arm Door Row","Reverse Row (feet elevated)"]},
-        {label:"Day 4",focus:"Core",exercises:["Hanging Leg Raise","Back Extension","V-Up","Superman"]},
-        {label:"Day 5",focus:"Circuit",exercises:["12 Single-leg Squats (alternating)","6 Dive Bombers","8× Reverse Row","12 Single-leg Squats"]},
+      { range:"Week 7", block:"Rotation Block", method:"Day 1: Steps · Day 2: Supersets · Day 3: Intervals · Day 4: HIIT · Day 5: Circuit", days:[
+        {label:"Day 1 (Steps)",focus:"Push",exercises:["One-arm Push-up (knee-high elevated)","Dive Bomber","Tricep Dip"]},
+        {label:"Day 2 (Super)",focus:"Legs",exercises:["1. Pistol → Sissy Squat","2. Box Jump → Iron Mike","3. Nordic Curl → Lateral Jump"]},
+        {label:"Day 3 (Intervals)",focus:"Pull",exercises:["Eccentric Pull-up","Door Row +hold","Reverse Row (feet elevated)","Reverse Row (underhand, feet elevated)"]},
+        {label:"Day 4 (HIIT)",focus:"Core",exercises:["Oblique V-Up","Scissor Crunch (arms crossed)","Bicycle Crunch","Reverse Row (underhand)"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["12 Single-leg Squats (alternating)","6 Dive Bombers","8x Reverse Row","12 Single-leg Squats"]},
+      ]},
+      { range:"Week 8", block:"Rotation Block", method:"Day 1: HIIT · Day 2: Steps · Day 3: Supersets · Day 4: Intervals · Day 5: Circuit", days:[
+        {label:"Day 1 (HIIT)",focus:"Push",exercises:["Full Push-up","Explosive Push-up","Double Clap Push-up (Burpee)"]},
+        {label:"Day 2 (Steps)",focus:"Legs",exercises:["Single-leg Squat (assisted)","Sissy Squat","Lateral Lunge +hold","Hip Extension"]},
+        {label:"Day 3 (Super)",focus:"Pull",exercises:["1. Eccentric Pull-up → Reverse Row","2. One-arm Door Row → Reverse Row (underhand, feet elevated)","3. Underhand Row → Towel Curl"]},
+        {label:"Day 4 (Intervals)",focus:"Core",exercises:["Hanging Leg Raise (straight up)","Back Extension","V-Up","Superman"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["12 Single-leg Squats (alternating)","6 Dive Bombers","8x Reverse Row"]},
+      ]},
+      { range:"Week 9", block:"Rotation Block", method:"Day 1: Intervals · Day 2: HIIT · Day 3: Steps · Day 4: Supersets · Day 5: Circuit", days:[
+        {label:"Day 1 (Intervals)",focus:"Push",exercises:["One-arm Push-up (elevated)","Dive Bomber","Reverse Row (underhand, feet elevated)","Military Press (elevated)"]},
+        {label:"Day 2 (HIIT)",focus:"Legs",exercises:["Iron Mike","Lateral Jump","Squat","Single-leg RDL on cushion"]},
+        {label:"Day 3 (Steps)",focus:"Pull",exercises:["Eccentric Pull-up","Door Row","Reverse Row (feet elevated)","One-arm Door Row"]},
+        {label:"Day 4 (Super)",focus:"Core",exercises:["1. Hanging Leg Raise → Bicycle Crunch","2. Back Extension → Superman","3. V-Up → Knee Twist"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["12 Single-leg Squats (alternating)","6 Dive Bombers","8x Reverse Row"]},
+      ]},
+      { range:"Week 10", block:"Rotation Block", method:"Day 1: Supersets · Day 2: Intervals · Day 3: HIIT · Day 4: Steps · Day 5: Circuit", days:[
+        {label:"Day 1 (Super)",focus:"Push",exercises:["1. One-arm Push-up → Plyometric Push-up","2. Military Press (elevated) → Overhead Press","3. Close-grip Push-up (elevated) → Bench Dips"]},
+        {label:"Day 2 (Intervals)",focus:"Legs",exercises:["Single-leg Squat (assisted)","Bulgarian Split Squat +hold","Lateral Lunge +hold","Single-leg Hip Extension"]},
+        {label:"Day 3 (HIIT)",focus:"Pull",exercises:["Reverse Row","Door Row","Reverse Row (feet elevated)","One-arm Door Row"]},
+        {label:"Day 4 (Steps)",focus:"Core",exercises:["Oblique V-Up","Flying Spread Eagle","Leg Raise (arms crossed)","Superman (chin hold)"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["12 Single-leg Squats (alternating)","6 Dive Bombers","8x Reverse Row"]},
+      ]},
+    ]
+  },
+  "Chief Class": {
+    weeks: [
+      { range:"Weeks 1–2", block:"Muscular Endurance", method:"Step Intervals", days:[
+        {label:"Day 1",focus:"Push / Pull",exercises:["One-arm Push-up (hand elevated)","Pull-up with hold","Dive Bomber","Reverse Row (feet elevated)"]},
+        {label:"Day 2",focus:"Legs / Core",exercises:["Pistol Squat","Iron Mike","Single-leg Hip Extension","Back Extension"]},
+        {label:"Day 3",focus:"Push / Pull",exercises:["One-arm Push-up (hand elevated)","Pull-up with hold","Military Press (feet elevated)","One-arm Door Row"]},
+        {label:"Day 4",focus:"Legs / Core",exercises:["Single-leg Squat (alternating)","Box Jump","Sissy Squat","Knee Twist"]},
+      ]},
+      { range:"Weeks 3–4", block:"Strength", method:"Interval Sets (3×6–12 reps, 3 min intervals)", days:[
+        {label:"Day 1",focus:"Push",exercises:["One-arm Push-up","Handstand Push-up","Dive Bomber","Elevated Tricep Extension (hip-high)"]},
+        {label:"Day 2",focus:"Legs",exercises:["Pistol Squat","Bulgarian Split Squat +hold","Sissy Squat","Iron Mike"]},
+        {label:"Day 3",focus:"Pull",exercises:["Pull-up with hold","One-arm Door Row","Reverse Row (underhand, feet elevated)","Door Row +hold"]},
+        {label:"Day 4",focus:"Core",exercises:["Hanging Leg Raise (all the way up)","Back Extension","Jackknife","Superman"]},
+      ]},
+      { range:"Weeks 5–6", block:"Power", method:"Supersets (4 min intervals, 3 pairs/day)", days:[
+        {label:"Day 1",focus:"Push",exercises:["1. One-arm Push-up (feet elevated) → Plyometric Push-up","2. Handstand Push-up +hold → Dive Bomber","3. Elevated Tricep Extension → Explosive Push-up"]},
+        {label:"Day 2",focus:"Legs",exercises:["1. Pistol +hold → Box Jump","2. Sissy Squat +hold → Iron Mike","3. Nordic Curl → Lateral Jump"]},
+        {label:"Day 3",focus:"Pull",exercises:["1. Pull-up +hold → Reverse Row (feet elevated)","2. One-arm Door Row +hold → Reverse Row (underhand, feet elevated)","3. Pull-up to sternum → Underhand Row +hold"]},
+        {label:"Day 4",focus:"Core",exercises:["1. Hanging Leg Raise +hold → Slow Bicycle Crunch","2. Back Extension → Superman","3. Jackknife → Knee Twist"]},
+      ]},
+      { range:"Week 7", block:"Rotation Block", method:"Day 1: Steps · Day 2: Supersets · Day 3: Intervals · Day 4: HIIT · Day 5: Circuit", days:[
+        {label:"Day 1 (Steps)",focus:"Push",exercises:["One-arm Push-up","Handstand Push-up","Dive Bomber","Tricep Dip +hold"]},
+        {label:"Day 2 (Super)",focus:"Legs",exercises:["1. Pistol +hold → Box Jump","2. Sissy Squat +hold → Iron Mike","3. Nordic Curl → Lateral Jump"]},
+        {label:"Day 3 (Intervals)",focus:"Pull",exercises:["Pull-up +hold","One-arm Door Row","Reverse Row (underhand, feet elevated)","Door Row +hold"]},
+        {label:"Day 4 (HIIT)",focus:"Core",exercises:["V-Up","Oblique V-Up","Mountain Climber","Tricep Dip"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["12 Pistols (alternating)","6 Handstand Push-ups","8 Pull-ups"]},
+      ]},
+      { range:"Week 8", block:"Rotation Block", method:"Day 1: HIIT · Day 2: Steps · Day 3: Supersets · Day 4: Intervals · Day 5: Circuit", days:[
+        {label:"Day 1 (HIIT)",focus:"Push",exercises:["Single-leg Squat (assisted)","Sissy Squat","Mountain Climber","Double Clap Push-up (Burpee)"]},
+        {label:"Day 2 (Steps)",focus:"Legs",exercises:["Single-leg Squat (assisted)","Sissy Squat","Iron Mike","Single-leg Hip Extension"]},
+        {label:"Day 3 (Super)",focus:"Pull",exercises:["1. Pull-up +hold → Reverse Row (feet elevated)","2. One-arm Door Row +hold → Reverse Row (underhand, feet elevated)","3. Pull-up to sternum → Underhand Row"]},
+        {label:"Day 4 (Intervals)",focus:"Core",exercises:["Hanging Leg Raise (all the way up)","Back Extension","Jackknife","Superman"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["12 Pistols (alternating)","6 Handstand Push-ups","8 Pull-ups"]},
+      ]},
+      { range:"Week 9", block:"Rotation Block", method:"Day 1: Intervals · Day 2: HIIT · Day 3: Steps · Day 4: Supersets · Day 5: Circuit", days:[
+        {label:"Day 1 (Intervals)",focus:"Push",exercises:["Pull-up +hold","One-arm Push-up","Reverse Row (underhand, feet elevated)","Military Press (feet elevated)"]},
+        {label:"Day 2 (HIIT)",focus:"Legs",exercises:["Iron Mike","Lateral Jump","Stretched Squat","Pistol Squat"]},
+        {label:"Day 3 (Steps)",focus:"Pull",exercises:["Pull-up with hold","One-arm Door Row","Reverse Row (feet elevated)","One-arm Door Row (alternating)"]},
+        {label:"Day 4 (Super)",focus:"Core",exercises:["1. Hanging Leg Raise (feet to hands) → Slow Bicycle Crunch","2. Back Extension → Superman","3. Jackknife → Knee Twist"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["12 Pistols (alternating)","6 Handstand Push-ups","8 Pull-ups"]},
+      ]},
+      { range:"Week 10", block:"Rotation Block", method:"Day 1: Supersets · Day 2: Intervals · Day 3: HIIT · Day 4: Steps · Day 5: Circuit", days:[
+        {label:"Day 1 (Super)",focus:"Push",exercises:["1. One-arm Push-up (feet elevated) → Plyometric Push-up","2. Handstand Push-up → Dive Bomber +hold","3. Elevated Tricep Extension → Explosive Push-up"]},
+        {label:"Day 2 (Intervals)",focus:"Legs",exercises:["Single-leg Squat (assisted)","Bulgarian Split Squat (rucksack overhead)","Iron Mike","Nordic Curl"]},
+        {label:"Day 3 (HIIT)",focus:"Pull",exercises:["Assisted Pull-up (jump up)","Reverse Row (underhand, feet elevated)","Door Row","Mountain Climber"]},
+        {label:"Day 4 (Steps)",focus:"Core",exercises:["Jackknife","Back Extension","Oblique V-Up (straight legs)","Superman"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["12 Pistols (alternating)","6 Handstand Push-ups","8 Pull-ups"]},
       ]},
     ]
   }
