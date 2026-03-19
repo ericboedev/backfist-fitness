@@ -291,16 +291,16 @@ function renderModal(){
     <div class="sheet">
       <div class="handle"></div>
       <div class="s-title">${modal==="editEx"?"Edit Exercise":"Add Exercise"}</div>
-      <div class="field"><div class="flabel">Name</div><input class="inp" value="${esc(fName)}" oninput="ss({fName:this.value})" placeholder="e.g. Dragon Flag" /></div>
+      <div class="field"><div class="flabel">Name</div><input class="inp" value="${esc(fName)}" onblur="ss({fName:this.value})" placeholder="e.g. Dragon Flag" /></div>
       <div class="frow">
         <div class="field"><div class="flabel">Category</div><select class="inp" onchange="ss({fCat:this.value})">${["Push","Pull","Legs","Core","BJJ"].map(c=>`<option ${fCat===c?"selected":""}>${c}</option>`).join("")}</select></div>
         <div class="field"><div class="flabel">Level</div><select class="inp" onchange="ss({fLevel:this.value})">${LEVELS.map(l=>`<option ${fLevel===l?"selected":""}>${l}</option>`).join("")}</select></div>
       </div>
       <div class="frow">
         <div class="field"><div class="flabel">Sets</div><input class="inp" type="number" min="1" max="10" value="${fSets}" oninput="ss({fSets:this.value})" /></div>
-        <div class="field"><div class="flabel">Reps / Duration</div><input class="inp" value="${esc(fReps)}" oninput="ss({fReps:this.value})" placeholder="10 or 30s" /></div>
+        <div class="field"><div class="flabel">Reps / Duration</div><input class="inp" value="${esc(fReps)}" onblur="ss({fReps:this.value})" placeholder="10 or 30s" /></div>
       </div>
-      <div class="field"><div class="flabel">Notes</div><textarea class="inp" rows="2" oninput="ss({fNotes:this.value})">${esc(fNotes)}</textarea></div>
+      <div class="field"><div class="flabel">Notes</div><textarea class="inp" rows="2" onblur="ss({fNotes:this.value})">${esc(fNotes)}</textarea></div>
       <div class="mactions">
         <button class="btn-c" onclick="ss({modal:null})">Cancel</button>
         <button class="btn-s" onclick="saveEx()">Save</button>
@@ -332,7 +332,7 @@ function renderModal(){
         </div>`).join("")}
       <div class="lib-label">Add from library</div>
       <div class="lib-chips">${rel.map(ex=>`<button class="lib-chip" onclick="addLex('${ex.id}')">+ ${esc(ex.name)}</button>`).join("")}</div>
-      <div class="field" style="margin-top:12px"><div class="flabel">Notes</div><textarea class="inp" rows="2" oninput="ss({lNotes:this.value})" placeholder="PRs, how it felt...">${esc(lNotes)}</textarea></div>
+      <div class="field" style="margin-top:12px"><div class="flabel">Notes</div><textarea class="inp" rows="2" onblur="ss({lNotes:this.value})" placeholder="PRs, how it felt...">${esc(lNotes)}</textarea></div>
       <div class="mactions">
         <button class="btn-c" onclick="ss({modal:null})">Cancel</button>
         <button class="btn-s" onclick="saveLog()">Save Workout</button>
@@ -558,14 +558,15 @@ const PROGRAMS = {
 };
 
 const METHOD_EXPLAINERS = {
-  "Step Intervals": "1 rep → rest → 2 reps → rest → 3 reps... up to max, then back down. Rest = same duration as the set. 7.5 min per exercise.",
-  "Interval Sets (3×6–12 reps, 3 min intervals)": "3 sets per exercise. 3-min intervals — start the set, do 6–12 reps to near-failure, rest the remainder. Next exercise starts at 9 min.",
-  "Supersets (4 min intervals, 3 pairs/day)": "3 exercise pairs. 1st exercise: 1–5 reps (controlled, slow negative). 2nd exercise: 6–12 reps (fast). 4-min intervals. 6 total sets.",
-  "Day 1: Steps · Day 2: Supersets · Day 3: Intervals · Day 4: HIIT · Day 5: Circuit": "Rotation block: each day uses a different training method. 5 sessions/week.",
-  "Day 1: HIIT · Day 2: Steps · Day 3: Supersets · Day 4: Intervals · Day 5: Circuit": "Rotation block: shifted method order. 5 sessions/week.",
-  "Day 1: Intervals · Day 2: HIIT · Day 3: Steps · Day 4: Supersets · Day 5: Circuit": "Rotation block: shifted method order. 5 sessions/week.",
-  "Day 1: Supersets · Day 2: Intervals · Day 3: HIIT · Day 4: Steps · Day 5: Circuit": "Rotation block: shifted method order. 5 sessions/week.",
-  "5 days/week — rotating methods each day": "Weeks 7–10: each week rotates the training method per day — Steps, Supersets, Intervals, HIIT, Circuit.",
+  "Step Intervals": "Do 1 rep, rest, 2 reps, rest, 3 reps... climb until you'd fail the next step, then count back down. Rest time = same duration as the set you just did. Spend 7.5 minutes per exercise. Focus on perfect form — high reps at low intensity.",
+  "Interval Sets (3x6-12 reps, 3 min intervals)": "3 sets per exercise, 3-minute intervals. Start your set at 0 min — do 6–12 reps to near-failure, then rest for the remainder of the 3 minutes. Second set starts at 3 min, third at 6 min. Next exercise starts at 9 min. At least one set per exercise should reach near-failure at 6–12 reps.",
+  "Interval Sets (3×6–12 reps, 3 min intervals)": "3 sets per exercise, 3-minute intervals. Start your set at 0 min — do 6–12 reps to near-failure, then rest for the remainder of the 3 minutes. Second set starts at 3 min, third at 6 min. Next exercise starts at 9 min. At least one set per exercise should reach near-failure at 6–12 reps.",
+  "Supersets (4 min intervals, 3 pairs/day)": "3 exercise pairs per session. Each pair = 2 exercises done back-to-back. Exercise 1: 1–5 reps, slow controlled movement (2–3s negative, 1s explosive). Exercise 2: 6–12 reps as fast as possible with good form. 4-minute intervals — 6 total sets per session. Do NOT go to failure on Exercise 1.",
+  "Day 1: Steps · Day 2: Supersets · Day 3: Intervals · Day 4: HIIT · Day 5: Circuit": "Rotation Block — 5 training days, each with a different method. Day 1: Step Intervals (endurance, high reps). Day 2: Supersets (paired exercises, power). Day 3: Interval Sets (3×6–12, strength). Day 4: HIIT (8 rounds × 20s on / 10s off, 4 min per exercise). Day 5: Circuit (max rounds in 20 min, no rest).",
+  "Day 1: HIIT · Day 2: Steps · Day 3: Supersets · Day 4: Intervals · Day 5: Circuit": "Rotation Block — 5 training days, methods shifted. Day 1: HIIT (8 rounds × 20s on / 10s off). Day 2: Step Intervals (climb up then back down). Day 3: Supersets (paired exercises). Day 4: Interval Sets (3×6–12). Day 5: Circuit (max rounds in 20 min).",
+  "Day 1: Intervals · Day 2: HIIT · Day 3: Steps · Day 4: Supersets · Day 5: Circuit": "Rotation Block — 5 training days, methods shifted. Day 1: Interval Sets (3×6–12). Day 2: HIIT (8×20s on/10s off). Day 3: Step Intervals (climb up then back down). Day 4: Supersets (paired exercises, power). Day 5: Circuit (max rounds in 20 min).",
+  "Day 1: Supersets · Day 2: Intervals · Day 3: HIIT · Day 4: Steps · Day 5: Circuit": "Rotation Block — 5 training days, methods shifted. Day 1: Supersets (paired exercises). Day 2: Interval Sets (3×6–12). Day 3: HIIT (8×20s on/10s off). Day 4: Step Intervals (climb up then back down). Day 5: Circuit (max rounds in 20 min).",
+  "5 days/week — rotating methods each day": "Weeks 7–10: each week uses all 5 training methods — Step Intervals, Supersets, Interval Sets, HIIT, and Circuit — one per day. The order rotates each week so every muscle group gets every method across the block.",
 };
 
 const FOCUS_COLOR = {
