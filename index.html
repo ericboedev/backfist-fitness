@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#fafaf9" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#161616" media="(prefers-color-scheme: dark)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Backfist" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <title>Backfist Fitness</title>
+  <style>
+    :root {
+      --bg:#fafaf9;--bg2:#f0efed;--bg3:#fff;
+      --text:#1c1c1c;--text2:#666;--text3:#aaa;
+      --border:#e8e8e6;--border2:#d0d0ce;
+      --r:14px;--rs:10px;
+      --sb:env(safe-area-inset-bottom,0px);
+      --st:env(safe-area-inset-top,0px);
+    }
+    @media(prefers-color-scheme:dark){
+      :root{--bg:#161616;--bg2:#222;--bg3:#1e1e1e;--text:#f0f0ee;--text2:#888;--text3:#555;--border:#2a2a2a;--border2:#333;}
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    html,body{height:100%;font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);overscroll-behavior:none;}
+    input,select,textarea,button{font-family:inherit;}
+    #app{display:flex;flex-direction:column;height:100dvh;}
+    .hdr{padding:calc(var(--st) + 16px) 20px 0;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+    .hdr-eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--text3);text-transform:uppercase;}
+    .hdr-title{font-size:24px;font-weight:700;margin-top:2px;}
+    .add-btn{background:var(--text);color:var(--bg);border:none;border-radius:12px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;}
+    .tabs{display:flex;gap:4px;margin:14px 20px 0;background:var(--bg2);border-radius:12px;padding:4px;flex-shrink:0;}
+    .tab{flex:1;padding:9px 0;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);transition:all .15s;}
+    .tab.active{background:var(--bg3);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.08);}
+    .scroll{flex:1;overflow-y:auto;padding:14px 20px;padding-bottom:max(80px,calc(var(--sb) + 20px));-webkit-overflow-scrolling:touch;}
+    .card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px 15px;margin-bottom:9px;}
+    .card.tap{cursor:pointer;}.card.tap:active{opacity:.8;}
+    .card-title{font-size:15px;font-weight:600;}
+    .card-sub{font-size:12px;color:var(--text2);margin-top:3px;}
+    .card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px;}
+    .tag{font-size:11px;font-weight:500;padding:3px 8px;border-radius:8px;}
+    .t-push{background:#fff7ed;color:#c2410c;}
+    .t-pull{background:#eff6ff;color:#1d4ed8;}
+    .t-legs{background:#f0fdf4;color:#15803d;}
+    .t-core{background:#fef2f2;color:#b91c1c;}
+    .t-bjj{background:#faf5ff;color:#7c3aed;}
+    .t-neu{background:var(--bg2);color:var(--text2);}
+    .t-beg{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;}
+    .t-fc{background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;}
+    .t-mc{background:#faf5ff;color:#6b21a8;border:1px solid #e9d5ff;}
+    .t-cc{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;}
+    @media(prefers-color-scheme:dark){
+      .t-push{background:#2d1a0a;color:#fb923c;}
+      .t-pull{background:#0d1f3c;color:#60a5fa;}
+      .t-legs{background:#0d2d1a;color:#4ade80;}
+      .t-core{background:#2d0d0d;color:#f87171;}
+      .t-bjj{background:#1e0d3c;color:#c084fc;}
+      .t-beg{background:#0d2d1a;color:#4ade80;border-color:#166534;}
+      .t-fc{background:#0d1f3c;color:#60a5fa;border-color:#1d4ed8;}
+      .t-mc{background:#1e0d3c;color:#c084fc;border-color:#6b21a8;}
+      .t-cc{background:#2d1a0a;color:#fb923c;border-color:#9a3412;}
+    }
+    .empty{text-align:center;padding:60px 0;color:var(--text3);}
+    .empty-icon{font-size:42px;margin-bottom:12px;}
+    .empty-title{font-size:15px;font-weight:600;color:var(--text2);}
+    .empty-sub{font-size:13px;margin-top:4px;}
+    .search{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:12px;font-size:14px;background:var(--bg3);color:var(--text);outline:none;margin-bottom:12px;}
+    .chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none;}
+    .chips::-webkit-scrollbar{display:none;}
+    .chip{padding:6px 14px;border-radius:20px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
+    .chip.active{background:var(--text);color:var(--bg);border-color:var(--text);}
+    .ex-actions{display:flex;gap:5px;flex-shrink:0;margin-left:8px;}
+    .icon-btn{padding:5px 8px;border:1px solid var(--border);border-radius:8px;background:none;color:var(--text2);font-size:12px;cursor:pointer;}
+    .icon-btn.del{border-color:#fee2e2;color:#ef4444;}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;z-index:200;}
+    .sheet{background:var(--bg3);border-radius:20px 20px 0 0;padding:24px 20px;padding-bottom:max(32px,var(--sb));width:100%;max-height:92dvh;overflow-y:auto;}
+    .handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 20px;}
+    .s-title{font-size:19px;font-weight:700;margin-bottom:20px;}
+    .field{margin-bottom:14px;}
+    .flabel{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px;}
+    .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+    .inp{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:var(--rs);font-size:14px;background:var(--bg);color:var(--text);outline:none;}
+    .inp:focus{border-color:var(--border2);}
+    textarea.inp{resize:none;}
+    .feel-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
+    .feel-btn{padding:6px 12px;border-radius:20px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:12px;font-weight:600;cursor:pointer;}
+    .feel-btn.active{background:var(--text);color:var(--bg);border-color:var(--text);}
+    .mactions{display:flex;gap:10px;margin-top:20px;}
+    .btn-s{flex:2;padding:14px;border-radius:12px;border:none;background:var(--text);color:var(--bg);font-size:15px;font-weight:700;cursor:pointer;}
+    .btn-c{flex:1;padding:14px;border-radius:12px;border:1px solid var(--border);background:none;color:var(--text2);font-size:15px;cursor:pointer;}
+    .btn-d{flex:1;padding:14px;border-radius:12px;border:1px solid #fee2e2;background:none;color:#ef4444;font-size:15px;cursor:pointer;}
+    .lex-row{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--bg2);border-radius:10px;margin-bottom:6px;}
+    .lex-name{flex:1;font-size:13px;font-weight:500;}
+    .sinp{width:38px;text-align:center;border:1px solid var(--border);border-radius:6px;padding:5px 4px;font-size:12px;background:var(--bg3);color:var(--text);}
+    .slabel{font-size:11px;color:var(--text3);}
+    .rm-btn{border:none;background:none;color:var(--text3);font-size:18px;cursor:pointer;padding:0 2px;line-height:1;}
+    .lib-label{font-size:12px;font-weight:600;color:var(--text2);margin:12px 0 7px;}
+    .lib-chips{display:flex;gap:5px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;}
+    .lib-chips::-webkit-scrollbar{display:none;}
+    .lib-chip{padding:5px 11px;border-radius:20px;border:1px solid var(--border);background:var(--bg3);color:var(--text2);font-size:11px;font-weight:500;cursor:pointer;white-space:nowrap;}
+    .vrow{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;}
+    .vrow:last-child{border-bottom:none;}
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const CATS=["All","Push","Pull","Legs","Core","BJJ"];
+const LEVELS=["Beginner","First Class","Master Class","Chief Class"];
+const LVL_TAG={"Beginner":"beg","First Class":"fc","Master Class":"mc","Chief Class":"cc"};
+const CAT_TAG={Push:"push",Pull:"pull",Legs:"legs",Core:"core",BJJ:"bjj"};
+const FEELINGS=["Great","Good","OK","Tough","Bad"];
+const FE={Great:"💪",Good:"👍",OK:"😐",Tough:"😤",Bad:"😓"};
+const STYPES=["Push / Pull","Legs / Core","Push","Pull","Legs","Core","Full Body","BJJ / MMA"];
+
+const EX=[
+  {id:"p1",name:"Push-up (hands elevated)",category:"Push",level:"Beginner",default_sets:3,default_reps:"12",notes:"Liegestütz (Hände erhöht)"},
+  {id:"p2",name:"Bench Dips",category:"Push",level:"Beginner",default_sets:3,default_reps:"15",notes:"Dips im Sitzen"},
+  {id:"p3",name:"Military Press",category:"Push",level:"Beginner",default_sets:3,default_reps:"12",notes:"Kniend, mit Haushaltsgegenstand"},
+  {id:"p4",name:"Full Push-up",category:"Push",level:"First Class",default_sets:3,default_reps:"15",notes:"Liegestütz"},
+  {id:"p5",name:"Feet Elevated Push-up",category:"Push",level:"First Class",default_sets:3,default_reps:"12",notes:"Liegestütz (Füße erhöht)"},
+  {id:"p6",name:"Explosive Push-up",category:"Push",level:"First Class",default_sets:3,default_reps:"10",notes:"Liegestütz mit Abstoßen"},
+  {id:"p7",name:"Rocking Chair Push-up",category:"Push",level:"First Class",default_sets:3,default_reps:"10",notes:"Schaukelstuhl"},
+  {id:"p8",name:"One-arm Push-up (hand elevated)",category:"Push",level:"Master Class",default_sets:3,default_reps:"8",notes:"Einarmiger Liegestütz (Hand erhöht)"},
+  {id:"p9",name:"Pike Push-up (feet elevated)",category:"Push",level:"Master Class",default_sets:3,default_reps:"10",notes:"Military Press (Füße erhöht)"},
+  {id:"p10",name:"Dive Bomber Push-up",category:"Push",level:"Master Class",default_sets:3,default_reps:"8",notes:"Sturzflug"},
+  {id:"p11",name:"Handstand Push-up",category:"Push",level:"Chief Class",default_sets:3,default_reps:"5",notes:"Handstandliegestütz"},
+  {id:"p12",name:"Nordic Push-up",category:"Push",level:"Chief Class",default_sets:3,default_reps:"5",notes:"Fallender Liegestütz"},
+  {id:"u1",name:"Door Row",category:"Pull",level:"Beginner",default_sets:3,default_reps:"12",notes:"Türziehen"},
+  {id:"u2",name:"Reverse Row (knees bent)",category:"Pull",level:"Beginner",default_sets:3,default_reps:"12",notes:"Umgekehrtes Bankdrücken (Knie gebeugt)"},
+  {id:"u3",name:"Towel Curl",category:"Pull",level:"Beginner",default_sets:3,default_reps:"12",notes:"Curl mit Handtuch"},
+  {id:"u4",name:"Reverse Row (straight legs)",category:"Pull",level:"First Class",default_sets:3,default_reps:"12",notes:"Umgekehrtes Bankdrücken (Beine gestreckt)"},
+  {id:"u5",name:"Assisted Pull-up",category:"Pull",level:"First Class",default_sets:3,default_reps:"8",notes:"Türklimmzug (Füße auf Stuhl)"},
+  {id:"u6",name:"Underhand Door Row",category:"Pull",level:"First Class",default_sets:3,default_reps:"12",notes:"Türziehen im Untergriff"},
+  {id:"u7",name:"Eccentric Pull-up",category:"Pull",level:"Master Class",default_sets:3,default_reps:"6",notes:"Türklimmzug (Fokus Gegenbewegung)"},
+  {id:"u8",name:"Reverse Row (feet elevated)",category:"Pull",level:"Master Class",default_sets:3,default_reps:"10",notes:"Umgekehrtes Bankdrücken (Füße erhöht)"},
+  {id:"u9",name:"One-arm Door Row",category:"Pull",level:"Master Class",default_sets:3,default_reps:"8",notes:"Einarmiges Türziehen"},
+  {id:"u10",name:"Pull-up with hold",category:"Pull",level:"Chief Class",default_sets:3,default_reps:"5",notes:"Türklimmzug mit 1-3 Sek. Haltezeit"},
+  {id:"u11",name:"One-arm Pull-up",category:"Pull",level:"Chief Class",default_sets:3,default_reps:"3",notes:"Einarmiger Türklimmzug"},
+  {id:"l1",name:"Reverse Lunge (alternating)",category:"Legs",level:"Beginner",default_sets:3,default_reps:"12",notes:"Ausfallschritt nach hinten im Wechsel"},
+  {id:"l2",name:"Lateral Lunge",category:"Legs",level:"Beginner",default_sets:3,default_reps:"10",notes:"Seitlicher Ausfallschritt"},
+  {id:"l3",name:"Single-leg RDL",category:"Legs",level:"Beginner",default_sets:3,default_reps:"10",notes:"Rumänisches Kreuzheben auf einem Bein"},
+  {id:"l4",name:"Squat",category:"Legs",level:"Beginner",default_sets:3,default_reps:"15",notes:"Kniebeuge"},
+  {id:"l5",name:"Wall Sit",category:"Legs",level:"Beginner",default_sets:3,default_reps:"45s",notes:"Kniebeuge an der Wand"},
+  {id:"l6",name:"Sumo Squat",category:"Legs",level:"Beginner",default_sets:3,default_reps:"15",notes:"Sumo-Kniebeuge"},
+  {id:"l7",name:"Bulgarian Split Squat",category:"Legs",level:"First Class",default_sets:3,default_reps:"10",notes:"Bulgarische Kniebeuge"},
+  {id:"l8",name:"Jump Squat",category:"Legs",level:"First Class",default_sets:3,default_reps:"10",notes:"Gesprungene Kniebeuge"},
+  {id:"l9",name:"Iron Mike",category:"Legs",level:"First Class",default_sets:3,default_reps:"12",notes:"Alternierender Ausfallsprung"},
+  {id:"l10",name:"Box Jump",category:"Legs",level:"First Class",default_sets:3,default_reps:"8",notes:"Kistensprung"},
+  {id:"l11",name:"Single-leg Squat (assisted)",category:"Legs",level:"Master Class",default_sets:3,default_reps:"8",notes:"Einbeinige Kniebeuge (mit Stuhl)"},
+  {id:"l12",name:"Sissy Squat",category:"Legs",level:"Master Class",default_sets:3,default_reps:"10",notes:"Sissy-Kniebeuge"},
+  {id:"l13",name:"Hip Extension",category:"Legs",level:"Master Class",default_sets:3,default_reps:"12",notes:"Hüftstrecker"},
+  {id:"l14",name:"Nordic Curl",category:"Legs",level:"Master Class",default_sets:3,default_reps:"5",notes:"Fallender Liegestütz (Beine)"},
+  {id:"l15",name:"Pistol Squat",category:"Legs",level:"Chief Class",default_sets:3,default_reps:"6",notes:"Pistole"},
+  {id:"c1",name:"Swimmer",category:"Core",level:"Beginner",default_sets:3,default_reps:"15",notes:"Schwimmer"},
+  {id:"c2",name:"Oblique Crunch",category:"Core",level:"Beginner",default_sets:3,default_reps:"15",notes:"Schräger Crunch"},
+  {id:"c3",name:"Russian Twist",category:"Core",level:"Beginner",default_sets:3,default_reps:"20",notes:"Russischer Twist"},
+  {id:"c4",name:"Leg Raise",category:"Core",level:"Beginner",default_sets:3,default_reps:"12",notes:"Beinheber"},
+  {id:"c5",name:"Bicycle Crunch",category:"Core",level:"First Class",default_sets:3,default_reps:"20",notes:"Fahrradfahren"},
+  {id:"c6",name:"Superman",category:"Core",level:"First Class",default_sets:3,default_reps:"15",notes:"Strecken"},
+  {id:"c7",name:"Scissor Crunch",category:"Core",level:"First Class",default_sets:3,default_reps:"15",notes:"Beinscherencrunch"},
+  {id:"c8",name:"V-Up",category:"Core",level:"Master Class",default_sets:3,default_reps:"12",notes:"V-Up"},
+  {id:"c9",name:"Jackknife",category:"Core",level:"Master Class",default_sets:3,default_reps:"12",notes:"Klappmesser"},
+  {id:"c10",name:"Back Extension",category:"Core",level:"Master Class",default_sets:3,default_reps:"15",notes:"Rückenheber"},
+  {id:"c11",name:"Hanging Leg Raise",category:"Core",level:"Chief Class",default_sets:3,default_reps:"10",notes:"Hängendes Beinheben"},
+  {id:"c12",name:"Mountain Climber",category:"Core",level:"Chief Class",default_sets:3,default_reps:"20",notes:"Bergsteiger"},
+];
+
+function load(k,fb){try{const s=localStorage.getItem(k);return s?JSON.parse(s):fb;}catch{return fb;}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+
+let S={
+  tab:"log",
+  exercises:load("bf2_ex",EX),
+  logs:load("bf2_logs",[]),
+  exCat:"All",exSearch:"",
+  modal:null,editEx:null,viewLog:null,
+  planLevel:"First Class",
+  fName:"",fCat:"Push",fLevel:"First Class",fSets:"3",fReps:"10",fNotes:"",
+  lDate:new Date().toISOString().slice(0,10),
+  lDuration:"30",lType:"Push / Pull",lExs:[],lNotes:"",lFeel:"Good",
+};
+
+function ss(p){Object.assign(S,p);render();}
+
+function ctag(c){return"tag t-"+(CAT_TAG[c]||"neu");}
+function ltag(l){return"tag t-"+(LVL_TAG[l]||"neu");}
+function fd(d){return new Date(d+"T12:00:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+function render(){
+  const{tab,exercises,logs,exCat,exSearch,modal,editEx,viewLog:vl,
+    fName,fCat,fLevel,fSets,fReps,fNotes,
+    lDate,lDuration,lType,lExs,lNotes,lFeel}=S;
+  const fex=exercises.filter(e=>(exCat==="All"||e.category===exCat)&&(!exSearch||e.name.toLowerCase().includes(exSearch.toLowerCase())));
+  const titles={log:"Workout Log",plan:"10-Week Plan",exercises:"Exercise Library"};
+  const btns={log:"+ Log Workout",plan:"",exercises:"+ Add Exercise"};
+
+  document.getElementById("app").innerHTML=`
+    <div class="hdr">
+      <div><div class="hdr-eyebrow">Backfist Fitness</div><div class="hdr-title">${titles[tab]}</div></div>
+      <button class="add-btn" onclick="handleAdd()">${btns[tab]}</button>
+    </div>
+    <div class="tabs">
+      <button class="tab ${tab==="log"?"active":""}" onclick="ss({tab:'log'})">Log</button>
+      <button class="tab ${tab==="plan"?"active":""}" onclick="ss({tab:'plan'})">Plan</button>
+      <button class="tab ${tab==="exercises"?"active":""}" onclick="ss({tab:'exercises'})">Exercises</button>
+    </div>
+    ${tab==="log"?renderLog(logs):tab==="plan"?renderPlan():renderExList(fex,exSearch,exCat)}
+    ${modal?renderModal():""} `;
+}
+
+function renderLog(logs){
+  if(!logs.length)return`<div class="scroll"><div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No workouts yet</div><div class="empty-sub">Tap "+ Log Workout" to start</div></div></div>`;
+  return`<div class="scroll">${logs.map(l=>`
+    <div class="card tap" onclick="openViewLog('${l.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div><div class="card-title">${esc(l.type)}</div><div class="card-sub">${fd(l.date)} · ${l.duration} min</div></div>
+        <span style="font-size:20px">${FE[l.feeling]||"💪"}</span>
+      </div>
+      ${l.exercises.length?`<div class="card-tags">${l.exercises.map(e=>`<span class="tag t-neu">${esc(e.name)} ${e.sets}×${e.reps}</span>`).join("")}</div>`:""}
+      ${l.notes?`<div style="font-size:12px;color:var(--text2);margin-top:8px;font-style:italic">${esc(l.notes)}</div>`:""}
+    </div>`).join("")}</div>`;
+}
+
+function renderExList(fex,exSearch,exCat){
+  return`<div class="scroll">
+    <input class="search" value="${esc(exSearch)}" oninput="ss({exSearch:this.value})" placeholder="Search exercises..." />
+    <div class="chips">${CATS.map(c=>`<button class="chip ${exCat===c?"active":""}" onclick="ss({exCat:'${c}'})">${c}</button>`).join("")}</div>
+    ${!fex.length?`<div class="empty"><div class="empty-title">No exercises found</div></div>`:
+    fex.map(ex=>`
+      <div class="card">
+        <div style="display:flex;align-items:flex-start">
+          <div style="flex:1;min-width:0">
+            <div class="card-title">${esc(ex.name)}</div>
+            <div class="card-tags" style="margin-top:6px">
+              <span class="${ctag(ex.category)}">${ex.category}</span>
+              <span class="${ltag(ex.level)}">${ex.level}</span>
+              <span class="tag t-neu">${ex.default_sets}×${ex.default_reps}</span>
+            </div>
+            ${ex.notes?`<div style="font-size:11px;color:var(--text3);margin-top:5px;font-style:italic">${esc(ex.notes)}</div>`:""}
+          </div>
+          <div class="ex-actions">
+            <button class="icon-btn" onclick="openEditEx('${ex.id}')">✎</button>
+            ${ex.custom?`<button class="icon-btn del" onclick="delEx('${ex.id}')">✕</button>`:""}
+          </div>
+        </div>
+      </div>`).join("")}
+  </div>`;
+}
+
+function renderModal(){
+  const{modal,editEx:ee,viewLog:vl,fName,fCat,fLevel,fSets,fReps,fNotes,lDate,lDuration,lType,lExs,lNotes,lFeel,exercises}=S;
+
+  if(modal==="view"&&vl)return`<div class="overlay" onclick="if(event.target===this)ss({modal:null})">
+    <div class="sheet">
+      <div class="handle"></div>
+      <div class="s-title">${esc(vl.type)}</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px">
+        ${new Date(vl.date+"T12:00:00").toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long",year:"numeric"})} · ${vl.duration} min · ${FE[vl.feeling]||""} ${vl.feeling}
+      </div>
+      ${vl.exercises.map(e=>`<div class="vrow"><span style="font-weight:500">${esc(e.name)}</span><span style="color:var(--text2)">${e.sets} × ${e.reps}</span></div>`).join("")}
+      ${vl.notes?`<div style="margin-top:14px;font-size:13px;color:var(--text2);font-style:italic">"${esc(vl.notes)}"</div>`:""}
+      <div class="mactions">
+        <button class="btn-s" onclick="ss({modal:null})">Close</button>
+        <button class="btn-d" onclick="delLog('${vl.id}')">Delete</button>
+      </div>
+    </div></div>`;
+
+  if(modal==="addEx"||modal==="editEx")return`<div class="overlay" onclick="if(event.target===this)ss({modal:null})">
+    <div class="sheet">
+      <div class="handle"></div>
+      <div class="s-title">${modal==="editEx"?"Edit Exercise":"Add Exercise"}</div>
+      <div class="field"><div class="flabel">Name</div><input class="inp" value="${esc(fName)}" oninput="ss({fName:this.value})" placeholder="e.g. Dragon Flag" /></div>
+      <div class="frow">
+        <div class="field"><div class="flabel">Category</div><select class="inp" onchange="ss({fCat:this.value})">${["Push","Pull","Legs","Core","BJJ"].map(c=>`<option ${fCat===c?"selected":""}>${c}</option>`).join("")}</select></div>
+        <div class="field"><div class="flabel">Level</div><select class="inp" onchange="ss({fLevel:this.value})">${LEVELS.map(l=>`<option ${fLevel===l?"selected":""}>${l}</option>`).join("")}</select></div>
+      </div>
+      <div class="frow">
+        <div class="field"><div class="flabel">Sets</div><input class="inp" type="number" min="1" max="10" value="${fSets}" oninput="ss({fSets:this.value})" /></div>
+        <div class="field"><div class="flabel">Reps / Duration</div><input class="inp" value="${esc(fReps)}" oninput="ss({fReps:this.value})" placeholder="10 or 30s" /></div>
+      </div>
+      <div class="field"><div class="flabel">Notes</div><textarea class="inp" rows="2" oninput="ss({fNotes:this.value})">${esc(fNotes)}</textarea></div>
+      <div class="mactions">
+        <button class="btn-c" onclick="ss({modal:null})">Cancel</button>
+        <button class="btn-s" onclick="saveEx()">Save</button>
+      </div>
+    </div></div>`;
+
+  if(modal==="newLog"){
+    const rel=exercises.filter(e=>lType.includes(e.category)||lType==="Full Body"||lType==="BJJ / MMA");
+    return`<div class="overlay" onclick="if(event.target===this)ss({modal:null})">
+    <div class="sheet">
+      <div class="handle"></div>
+      <div class="s-title">Log Workout</div>
+      <div class="frow">
+        <div class="field"><div class="flabel">Date</div><input class="inp" type="date" value="${lDate}" onchange="ss({lDate:this.value})" /></div>
+        <div class="field"><div class="flabel">Duration (min)</div><input class="inp" type="number" min="1" value="${lDuration}" oninput="ss({lDuration:this.value})" /></div>
+      </div>
+      <div class="field"><div class="flabel">Session Type</div><select class="inp" onchange="ss({lType:this.value})">${STYPES.map(t=>`<option ${lType===t?"selected":""}>${t}</option>`).join("")}</select></div>
+      <div class="field"><div class="flabel">How did it feel?</div>
+        <div class="feel-row">${FEELINGS.map(f=>`<button class="feel-btn ${lFeel===f?"active":""}" onclick="ss({lFeel:'${f}'})">${FE[f]} ${f}</button>`).join("")}
+      </div></div>
+      <div class="flabel" style="margin-bottom:8px">Exercises</div>
+      ${lExs.map((e,i)=>`
+        <div class="lex-row">
+          <span class="lex-name">${esc(e.name)}</span>
+          <input class="sinp" value="${e.sets}" onchange="updLex(${i},'sets',this.value)" />
+          <span class="slabel">×</span>
+          <input class="sinp" style="width:44px" value="${esc(e.reps)}" onchange="updLex(${i},'reps',this.value)" />
+          <button class="rm-btn" onclick="rmLex(${i})">×</button>
+        </div>`).join("")}
+      <div class="lib-label">Add from library</div>
+      <div class="lib-chips">${rel.map(ex=>`<button class="lib-chip" onclick="addLex('${ex.id}')">+ ${esc(ex.name)}</button>`).join("")}</div>
+      <div class="field" style="margin-top:12px"><div class="flabel">Notes</div><textarea class="inp" rows="2" oninput="ss({lNotes:this.value})" placeholder="PRs, how it felt...">${esc(lNotes)}</textarea></div>
+      <div class="mactions">
+        <button class="btn-c" onclick="ss({modal:null})">Cancel</button>
+        <button class="btn-s" onclick="saveLog()">Save Workout</button>
+      </div>
+    </div></div>`;
+  }
+  return"";
+}
+
+function handleAdd(){if(S.tab==="log")ss({modal:"newLog",lDate:new Date().toISOString().slice(0,10),lDuration:"30",lType:"Push / Pull",lExs:[],lNotes:"",lFeel:"Good"});else if(S.tab==="exercises")ss({modal:"addEx",editEx:null,fName:"",fCat:"Push",fLevel:"First Class",fSets:"3",fReps:"10",fNotes:""});}
+function openEditEx(id){const ex=S.exercises.find(e=>e.id===id);if(!ex)return;ss({modal:"editEx",editEx:ex,fName:ex.name,fCat:ex.category,fLevel:ex.level,fSets:String(ex.default_sets),fReps:ex.default_reps,fNotes:ex.notes||""});}
+function saveEx(){const{fName,fCat,fLevel,fSets,fReps,fNotes,editEx:ee,exercises}=S;if(!fName.trim())return;const entry={id:ee?.id||"c"+Date.now(),name:fName.trim(),category:fCat,level:fLevel,default_sets:parseInt(fSets)||3,default_reps:fReps,notes:fNotes,custom:true};const u=ee?exercises.map(e=>e.id===ee.id?entry:e):[...exercises,entry];save("bf2_ex",u);ss({exercises:u,modal:null});}
+function delEx(id){if(!confirm("Remove?"))return;const u=S.exercises.filter(e=>e.id!==id);save("bf2_ex",u);ss({exercises:u});}
+function openViewLog(id){const l=S.logs.find(x=>x.id===id);if(l)ss({modal:"view",viewLog:l});}
+function addLex(id){const ex=S.exercises.find(e=>e.id===id);if(!ex)return;ss({lExs:[...S.lExs,{id:ex.id,name:ex.name,sets:ex.default_sets,reps:ex.default_reps}]});}
+function rmLex(i){ss({lExs:S.lExs.filter((_,idx)=>idx!==i)});}
+function updLex(i,f,v){ss({lExs:S.lExs.map((e,idx)=>idx===i?{...e,[f]:v}:e)});}
+function saveLog(){const{lDate,lDuration,lType,lExs,lNotes,lFeel,logs}=S;const entry={id:"l"+Date.now(),date:lDate,duration:parseInt(lDuration)||30,type:lType,exercises:lExs,notes:lNotes,feeling:lFeel};const u=[entry,...logs];save("bf2_logs",u);ss({logs:u,modal:null});}
+function delLog(id){if(!confirm("Delete workout?"))return;const u=S.logs.filter(l=>l.id!==id);save("bf2_logs",u);ss({logs:u,modal:null});}
+
+// ── PROGRAM DATA ──────────────────────────────────────────────────────────────
+const PROGRAMS = {
+  "First Class": {
+    weeks: [
+      { range:"Weeks 1–2", block:"Muscular Endurance", method:"Step Intervals", days:[
+        {label:"Day 1",focus:"Push / Pull",exercises:["Full Push-up","Reverse Row (straight legs)","Military Press","Door Row"]},
+        {label:"Day 2",focus:"Legs / Core",exercises:["Reverse Lunge (alternating) +hold","Single-leg RDL","Jump Squat +hold","Superman"]},
+        {label:"Day 3",focus:"Push / Pull",exercises:["Full Push-up","Reverse Row (straight legs)","Military Press","Door Row"]},
+        {label:"Day 4",focus:"Legs / Core",exercises:["Lateral Lunge +hold","Single-leg RDL","Jump Squat +hold","Russian Twist"]},
+      ]},
+      { range:"Weeks 3–4", block:"Strength", method:"Interval Sets (3×6–12 reps, 3 min intervals)", days:[
+        {label:"Day 1",focus:"Push",exercises:["Feet Elevated Push-up","Military Press","Close-grip Push-up (elevated)","Bench Dips"]},
+        {label:"Day 2",focus:"Legs",exercises:["Bulgarian Split Squat +hold","Lateral Lunge +hold","Jump Squat +hold","Single-leg RDL on cushion"]},
+        {label:"Day 3",focus:"Pull",exercises:["Assisted Pull-up (eccentric)","Reverse Row (straight legs)","Door Row","Towel Curl"]},
+        {label:"Day 4",focus:"Core",exercises:["Leg Raise (arms crossed)","Superman","Bicycle Crunch","Superman (chin hold)"]},
+      ]},
+      { range:"Weeks 5–6", block:"Power", method:"Supersets (4 min intervals, 3 pairs/day)", days:[
+        {label:"Day 1",focus:"Push",exercises:["1. Feet Elevated Push-up → Explosive Push-up","2. Military Press → Thumbs Up","3. Close-grip Push-up → Bench Dips"]},
+        {label:"Day 2",focus:"Legs",exercises:["1. Single-leg Squat (assisted) → Jump Squat +hold","2. Lateral Lunge +hold → Reverse Lunge +hold","3. Single-leg RDL on cushion → Box Jump"]},
+        {label:"Day 3",focus:"Pull",exercises:["1. Assisted Pull-up → Door Row","2. Door Row +hold → Reverse Row","3. Reverse Row (feet elevated) → Underhand Row"]},
+        {label:"Day 4",focus:"Core",exercises:["1. Hanging Leg Raise → Knee Twist","2. Single-leg Hip Extension → Superman","3. V-Up → Russian Twist"]},
+      ]},
+      { range:"Week 7", block:"Rotation Block", method:"Day 1: Steps · Day 2: Supersets · Day 3: Intervals · Day 4: HIIT · Day 5: Circuit", days:[
+        {label:"Day 1 (Steps)",focus:"Push",exercises:["One-arm Push-up (elevated)","Full Push-up","Close-grip Push-up (elevated)","Bench Dips"]},
+        {label:"Day 2 (Super)",focus:"Legs",exercises:["1. Single-leg Squat → Jump Squat +hold","2. Lateral Lunge → Reverse Lunge","3. Single-leg RDL on cushion → Box Jump"]},
+        {label:"Day 3 (Intervals)",focus:"Pull",exercises:["Assisted Pull-up","Reverse Row","Door Row","Towel Curl"]},
+        {label:"Day 4 (HIIT)",focus:"Core",exercises:["Russian Twist","Scissor Crunch","Knee Raise standing","Bicycle Crunch"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["6× Door Row (bent knee)","12 Lateral Lunges","8× Door Row","6 Push-ups"]},
+      ]},
+      { range:"Week 8", block:"Rotation Block", method:"Day 1: HIIT · Day 2: Steps · Day 3: Supersets · Day 4: Intervals · Day 5: Circuit", days:[
+        {label:"Day 1 (HIIT)",focus:"Push",exercises:["Push-up (chest elevated)","Rocking Chair","Double Clap Push-up"]},
+        {label:"Day 2 (Steps)",focus:"Legs",exercises:["Reverse Lunge","Single-leg RDL","Squat +hold","Good Mornings +hold"]},
+        {label:"Day 3 (Super)",focus:"Pull",exercises:["1. Assisted Pull-up → Door Row","2. Door Row +hold → Reverse Row","3. Reverse Row (straight legs) → Underhand Row"]},
+        {label:"Day 4 (Intervals)",focus:"Core",exercises:["Leg Raise","Superman (chin)","Russian Twist","Swimmer"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["10 Reverse Lunges","8× Door Row","6 Push-ups"]},
+      ]},
+      { range:"Week 9", block:"Rotation Block", method:"Day 1: Intervals · Day 2: HIIT · Day 3: Steps · Day 4: Supersets · Day 5: Circuit", days:[
+        {label:"Day 1 (Intervals)",focus:"Push",exercises:["Feet Elevated Push-up","Military Press (elevated)","Close-grip Push-up (elevated)","Bench Dips"]},
+        {label:"Day 2 (HIIT)",focus:"Legs",exercises:["Iron Mike","Lateral Jump","Squat","Single-leg RDL on cushion"]},
+        {label:"Day 3 (Steps)",focus:"Pull",exercises:["Reverse Row (bent knee)","Door Row","Reverse Row (feet elevated)","Underhand Row"]},
+        {label:"Day 4 (Super)",focus:"Core",exercises:["1. Hanging Leg Raise → Knee Twist","2. Single-leg Hip Extension → Superman","3. V-Up → Russian Twist"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["6× Door Row (bent knee)","12 Lateral Lunges","8× Door Row","6 Push-ups"]},
+      ]},
+      { range:"Week 10", block:"Rotation Block", method:"Day 1: Supersets · Day 2: Intervals · Day 3: HIIT · Day 4: Steps · Day 5: Circuit", days:[
+        {label:"Day 1 (Super)",focus:"Push",exercises:["1. Feet Elevated Push-up +hold → Explosive Push-up","2. Military Press → Overhead Press","3. Close-grip Push-up → Bench Dips (feet elevated)"]},
+        {label:"Day 2 (Intervals)",focus:"Legs",exercises:["Bulgarian Split Squat","Lateral Lunge +hold","Jump Squat +hold","Single-leg RDL on cushion"]},
+        {label:"Day 3 (HIIT)",focus:"Pull",exercises:["Door Row","Flying Spread Eagle","Reverse Row","Swimmer"]},
+        {label:"Day 4 (Steps)",focus:"Core",exercises:["Bicycle Crunch","Superman (arms tight)","Leg Raise","Swimmer"]},
+        {label:"Day 5 (Circuit)",focus:"Full",exercises:["6× Door Row (bent knee)","12 Lateral Lunges","8× Door Row","6 Push-ups"]},
+      ]},
+    ]
+  },
+  "Master Class": {
+    weeks: [
+      { range:"Weeks 1–2", block:"Muscular Endurance", method:"Step Intervals", days:[
+        {label:"Day 1",focus:"Push / Pull",exercises:["One-arm Push-up (hand elevated)","Eccentric Pull-up","Pike Push-up (feet elevated)","Reverse Row (feet elevated)"]},
+        {label:"Day 2",focus:"Legs / Core",exercises:["Single-leg Squat (assisted)","Lateral Lunge +hold","Single-leg RDL on cushion","Hip Extension"]},
+        {label:"Day 3",focus:"Push / Pull",exercises:["One-arm Push-up (hand elevated)","Eccentric Pull-up","Military Press","Door Row"]},
+        {label:"Day 4",focus:"Legs / Core",exercises:["Reverse Lunge +hold","Single-leg RDL on cushion","Hip Extension","Knee Twist"]},
+      ]},
+      { range:"Weeks 3–4", block:"Strength", method:"Interval Sets (3×6–12 reps, 3 min intervals)", days:[
+        {label:"Day 1",focus:"Push",exercises:["One-arm Push-up (hand elevated)","Dive Bomber Push-up","Pike Push-up (feet elevated)","Tricep Dip"]},
+        {label:"Day 2",focus:"Legs",exercises:["Single-leg Squat (assisted)","Bulgarian Split Squat +hold","Lateral Lunge +hold","Single-leg Hip Extension"]},
+        {label:"Day 3",focus:"Pull",exercises:["Eccentric Pull-up","Door Row +hold","Reverse Row (feet elevated)","Reverse Row (underhand, feet elevated)"]},
+        {label:"Day 4",focus:"Core",exercises:["Hanging Leg Raise (parallel)","Back Extension","V-Up","Superman"]},
+      ]},
+      { range:"Weeks 5–6", block:"Power", method:"Supersets (4 min intervals, 3 pairs/day)", days:[
+        {label:"Day 1",focus:"Push",exercises:["1. One-arm Push-up → Plyometric Push-up","2. Pike Push-up (elevated) → Dive Bomber","3. Elevated Tricep Extension → Explosive Push-up"]},
+        {label:"Day 2",focus:"Legs",exercises:["1. Pistol → Box Jump","2. Sissy Squat → Iron Mike","3. Nordic Curl → Lateral Jump"]},
+        {label:"Day 3",focus:"Pull",exercises:["1. Eccentric Pull-up → Door Row","2. One-arm Door Row → Reverse Row (underhand)","3. Underhand Row +hold → Towel Curl"]},
+        {label:"Day 4",focus:"Core",exercises:["1. Hanging Leg Raise → Bicycle Crunch","2. Back Extension → Superman","3. V-Up → Knee Twist"]},
+      ]},
+      { range:"Weeks 7–10", block:"Rotation Block", method:"5 days/week — rotating methods each day", days:[
+        {label:"Day 1",focus:"Push",exercises:["One-arm Push-up (elevated)","Dive Bomber","Tricep Dip","Bench Dip +hold"]},
+        {label:"Day 2",focus:"Legs",exercises:["Pistol / Single-leg Squat","Sissy Squat","Lateral Lunge +hold","Hip Extension"]},
+        {label:"Day 3",focus:"Pull",exercises:["Eccentric Pull-up","Door Row +hold","One-arm Door Row","Reverse Row (feet elevated)"]},
+        {label:"Day 4",focus:"Core",exercises:["Hanging Leg Raise","Back Extension","V-Up","Superman"]},
+        {label:"Day 5",focus:"Circuit",exercises:["12 Single-leg Squats (alternating)","6 Dive Bombers","8× Reverse Row","12 Single-leg Squats"]},
+      ]},
+    ]
+  }
+};
+
+const METHOD_EXPLAINERS = {
+  "Step Intervals": "1 rep → rest → 2 reps → rest → 3 reps... up to max, then back down. Rest = same duration as the set. 7.5 min per exercise.",
+  "Interval Sets (3×6–12 reps, 3 min intervals)": "3 sets per exercise. 3-min intervals — start the set, do 6–12 reps to near-failure, rest the remainder. Next exercise starts at 9 min.",
+  "Supersets (4 min intervals, 3 pairs/day)": "3 exercise pairs. 1st exercise: 1–5 reps (controlled, slow negative). 2nd exercise: 6–12 reps (fast). 4-min intervals. 6 total sets.",
+  "Day 1: Steps · Day 2: Supersets · Day 3: Intervals · Day 4: HIIT · Day 5: Circuit": "Rotation block: each day uses a different training method. 5 sessions/week.",
+  "Day 1: HIIT · Day 2: Steps · Day 3: Supersets · Day 4: Intervals · Day 5: Circuit": "Rotation block: shifted method order. 5 sessions/week.",
+  "Day 1: Intervals · Day 2: HIIT · Day 3: Steps · Day 4: Supersets · Day 5: Circuit": "Rotation block: shifted method order. 5 sessions/week.",
+  "Day 1: Supersets · Day 2: Intervals · Day 3: HIIT · Day 4: Steps · Day 5: Circuit": "Rotation block: shifted method order. 5 sessions/week.",
+  "5 days/week — rotating methods each day": "Weeks 7–10: each week rotates the training method per day — Steps, Supersets, Intervals, HIIT, Circuit.",
+};
+
+const FOCUS_COLOR = {
+  "Push":"t-push","Pull":"t-pull","Legs":"t-legs","Core":"t-core",
+  "Push / Pull":"t-push","Legs / Core":"t-legs","Full":"t-bjj","Circuit":"t-bjj"
+};
+
+function renderPlan(){
+  const level = S.planLevel || "First Class";
+  const prog = PROGRAMS[level];
+  const levels = Object.keys(PROGRAMS);
+
+  return`<div class="scroll">
+    <div style="display:flex;gap:6px;margin-bottom:16px">
+      ${levels.map(l=>"<button class=\"chip "+(level===l?"active ":"")+"\" onclick=\"ss({planLevel:'"+l+"'})\">"+l+"</button>").join("")}
+    </div>
+    <div style="background:var(--bg2);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--text2)">
+      <strong style="color:var(--text)">10-week program</strong> · 4–5 days/week · 20–30 min/session.<br>
+      Complete one full cycle, rest 1–2 weeks, then repeat at a harder level.
+    </div>
+    ${prog.weeks.map((w,wi)=>`
+      <div style="margin-bottom:20px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="font-size:13px;font-weight:700;color:var(--text)">${w.range}</div>
+          <div style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--bg2);color:var(--text2)">${w.block}</div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-bottom:10px;padding:8px 12px;background:var(--bg2);border-radius:10px;line-height:1.5">
+          <strong style="color:var(--text)">Method:</strong> ${METHOD_EXPLAINERS[w.method]||w.method}
+        </div>
+        ${w.days.map(d=>`
+          <div class="card" style="margin-bottom:7px;cursor:default">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <span style="font-size:13px;font-weight:700">${d.label}</span>
+              <span class="tag ${FOCUS_COLOR[d.focus]||"t-neu"}">${d.focus}</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              ${d.exercises.map(e=>`<div style="font-size:13px;color:var(--text2);padding-left:4px;line-height:1.4">${e}</div>`).join("")}
+            </div>
+          </div>`).join("")}
+      </div>`).join("")}
+  </div>`;
+}
+</script>
+</body>
+</html>
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+render();
