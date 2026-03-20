@@ -46,7 +46,7 @@
     .t-pull{background:#eff6ff;color:#1d4ed8;}
     .t-legs{background:#f0fdf4;color:#15803d;}
     .t-core{background:#fef2f2;color:#b91c1c;}
-    .t-bjj{background:#faf5ff;color:#7c3aed;}
+    .t-bjj{background:#faf5ff;color:#7c3aed;}.t-hyrox{background:#fff7ed;color:#c2410c;}
     .t-neu{background:var(--bg2);color:var(--text2);}
     .t-beg{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;}
     .t-fc{background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe;}
@@ -57,7 +57,7 @@
       .t-pull{background:#0d1f3c;color:#60a5fa;}
       .t-legs{background:#0d2d1a;color:#4ade80;}
       .t-core{background:#2d0d0d;color:#f87171;}
-      .t-bjj{background:#1e0d3c;color:#c084fc;}
+      .t-bjj{background:#1e0d3c;color:#c084fc;}.t-hyrox{background:#2d1a0a;color:#fb923c;}
       .t-beg{background:#0d2d1a;color:#4ade80;border-color:#166534;}
       .t-fc{background:#0d1f3c;color:#60a5fa;border-color:#1d4ed8;}
       .t-mc{background:#1e0d3c;color:#c084fc;border-color:#6b21a8;}
@@ -108,10 +108,10 @@
 <body>
 <div id="app"></div>
 <script>
-const CATS=["All","Push","Pull","Legs","Core","BJJ"];
+const CATS=["All","Push","Pull","Legs","Core","BJJ","Hyrox"];
 const LEVELS=["Beginner","First Class","Master Class","Chief Class"];
 const LVL_TAG={"Beginner":"beg","First Class":"fc","Master Class":"mc","Chief Class":"cc"};
-const CAT_TAG={Push:"push",Pull:"pull",Legs:"legs",Core:"core",BJJ:"bjj"};
+const CAT_TAG={Push:"push",Pull:"pull",Legs:"legs",Core:"core",BJJ:"bjj",Hyrox:"hyrox"};
 const FEELINGS=["Great","Good","OK","Tough","Bad"];
 const FE={Great:"💪",Good:"👍",OK:"😐",Tough:"😤",Bad:"😓"};
 const STYPES=["Push / Pull","Legs / Core","Push","Pull","Legs","Core","Full Body","BJJ / MMA"];
@@ -166,6 +166,20 @@ const EX=[
   {id:"c9",name:"Jackknife",category:"Core",level:"Master Class",default_sets:3,default_reps:"12",notes:"Klappmesser"},
   {id:"c10",name:"Back Extension",category:"Core",level:"Master Class",default_sets:3,default_reps:"15",notes:"Rückenheber"},
   {id:"c11",name:"Hanging Leg Raise",category:"Core",level:"Chief Class",default_sets:3,default_reps:"10",notes:"Hängendes Beinheben"},
+  
+  {id:"hx1",name:"SkiErg",category:"Hyrox",level:"All",default_sets:1,default_reps:"1000m",notes:"Station 1 — pull straps down, hips back"},
+  {id:"hx2",name:"Sled Push",category:"Hyrox",level:"All",default_sets:1,default_reps:"25m",notes:"Station 2 — M:152kg / F:102kg race weight"},
+  {id:"hx3",name:"Sled Pull",category:"Hyrox",level:"All",default_sets:1,default_reps:"25m",notes:"Station 3 — M:103kg / F:78kg race weight"},
+  {id:"hx4",name:"Burpee Broad Jumps",category:"Hyrox",level:"All",default_sets:1,default_reps:"80m",notes:"Station 4 — chest to floor, jump forward"},
+  {id:"hx5",name:"Row (Ergometer)",category:"Hyrox",level:"All",default_sets:1,default_reps:"1000m",notes:"Station 5 — legs first, damper 4-5"},
+  {id:"hx6",name:"Farmer's Carry",category:"Hyrox",level:"All",default_sets:1,default_reps:"200m",notes:"Station 6 — M:2x24kg / F:2x16kg"},
+  {id:"hx7",name:"Sandbag Lunges",category:"Hyrox",level:"All",default_sets:1,default_reps:"100m",notes:"Station 7 — M:20kg / F:10kg on shoulders"},
+  {id:"hx8",name:"Wall Balls",category:"Hyrox",level:"All",default_sets:1,default_reps:"100x",notes:"Station 8 — M:6kg to 3m / F:4kg to 2.7m"},
+  {id:"hx9",name:"KB Deadlifts",category:"Hyrox",level:"All",default_sets:3,default_reps:"12",notes:"Double KB, race weight or heavier"},
+  {id:"hx10",name:"KB Swings",category:"Hyrox",level:"All",default_sets:3,default_reps:"20",notes:"Hip hinge, power from glutes"},
+  {id:"hx11",name:"Thrusters",category:"Hyrox",level:"All",default_sets:1,default_reps:"20",notes:"F:15kg / M:20kg barbell"},
+  {id:"hx12",name:"Run WK-Tempo",category:"Hyrox",level:"All",default_sets:1,default_reps:"1000m",notes:"Race pace — your target min/km"},
+  {id:"hx13",name:"Double KB Deadlifts",category:"Hyrox",level:"All",default_sets:3,default_reps:"12",notes:"Race weight+, full hip extension"},
   {id:"c12",name:"Mountain Climber",category:"Core",level:"Chief Class",default_sets:3,default_reps:"20",notes:"Bergsteiger"},
   {id:"c13",name:"Crunch It Up",category:"Core",level:"First Class",default_sets:3,default_reps:"15",notes:"Crunch It Up"},
   {id:"c14",name:"Beach Scissors",category:"Core",level:"First Class",default_sets:3,default_reps:"15",notes:"Strandschere"},
@@ -196,6 +210,7 @@ let S={
   exCat:"All",exSearch:"",
   modal:null,editEx:null,viewLog:null,
   planLevel:"Basis",
+  activeProgram:"YAYOG",
   fName:"",fCat:"Push",fLevel:"First Class",fSets:"3",fReps:"10",fNotes:"",
   lDate:new Date().toISOString().slice(0,10),
   lDuration:"30",lType:"Push / Pull",lExs:[],lNotes:"",lFeel:"Good",
@@ -594,8 +609,83 @@ const PROGRAMS = {
   }
 };
 
+const HYROX_EXERCISES = [
+  {id:"hx1",name:"SkiErg",category:"Hyrox",level:"All",default_sets:1,default_reps:"1000m",notes:"Station 1 — pull straps down, hips back, full extension"},
+  {id:"hx2",name:"Sled Push",category:"Hyrox",level:"All",default_sets:1,default_reps:"25m",notes:"Station 2 — M: 152kg / F: 102kg race weight"},
+  {id:"hx3",name:"Sled Pull",category:"Hyrox",level:"All",default_sets:1,default_reps:"25m",notes:"Station 3 — M: 103kg / F: 78kg race weight"},
+  {id:"hx4",name:"Burpee Broad Jumps",category:"Hyrox",level:"All",default_sets:1,default_reps:"80m",notes:"Station 4 — chest to floor, jump forward, land soft"},
+  {id:"hx5",name:"Row (Ergometer)",category:"Hyrox",level:"All",default_sets:1,default_reps:"1000m",notes:"Station 5 — damper 4-5, drive with legs first"},
+  {id:"hx6",name:"Farmer's Carry",category:"Hyrox",level:"All",default_sets:1,default_reps:"200m",notes:"Station 6 — M: 2x24kg / F: 2x16kg"},
+  {id:"hx7",name:"Sandbag Lunges",category:"Hyrox",level:"All",default_sets:1,default_reps:"100m",notes:"Station 7 — M: 20kg / F: 10kg on shoulders"},
+  {id:"hx8",name:"Wall Balls",category:"Hyrox",level:"All",default_sets:1,default_reps:"100x",notes:"Station 8 — M: 6kg to 3m / F: 4kg to 2.7m target"},
+  {id:"hx9",name:"KB Deadlifts",category:"Hyrox",level:"All",default_sets:3,default_reps:"12",notes:"Double KB, race weight or heavier"},
+  {id:"hx10",name:"KB Swings",category:"Hyrox",level:"All",default_sets:3,default_reps:"20",notes:"Hip hinge, power from glutes"},
+  {id:"hx11",name:"Thrusters",category:"Hyrox",level:"All",default_sets:1,default_reps:"20",notes:"F: 15kg / M: 20kg barbell"},
+  {id:"hx12",name:"Air Squats",category:"Hyrox",level:"All",default_sets:3,default_reps:"20",notes:"Full depth, knees tracking toes"},
+  {id:"hx13",name:"Box Jumps",category:"Hyrox",level:"All",default_sets:3,default_reps:"20",notes:"Land softly, full hip extension at top"},
+  {id:"hx14",name:"Run (WK-Tempo)",category:"Hyrox",level:"All",default_sets:1,default_reps:"1000m",notes:"Race pace — your target min/km"},
+  {id:"hx15",name:"Run (Easy)",category:"Hyrox",level:"All",default_sets:1,default_reps:"3000m",notes:"RPE 4-5, conversational pace"},
+  {id:"hx16",name:"Bike (Ergometer)",category:"Hyrox",level:"All",default_sets:1,default_reps:"10min",notes:"Active recovery or warm-up RPE 4"},
+  {id:"hx17",name:"Double KB Deadlifts",category:"Hyrox",level:"All",default_sets:3,default_reps:"12",notes:"Race weight or heavier, full hip extension"},
+];
+
+const HYROX_PROGRAM = {
+  weeks: [
+    { range:"Week 1", block:"Base Building", method:"Mixed — Intervals + Endurance. RPE 7 for main sets. 3 rounds with fast station transitions, no rest between exercises.", days:[
+      {label:"Session 1",focus:"Strength + Cardio",exercises:["Warm-up: SkiErg 500m + Row 500m","Run 3000m (1000m WK-Tempo, 2000m 45s slower)","Workout 3 rounds RPE 7: KB Deadlifts 12x, Sled Pull 12.5m, KB Deadlifts 12x, Easy Run 5min","Cool-down: SkiErg 3000m"]},
+      {label:"Session 2",focus:"Run + Power",exercises:["Warm-up: Row 4000m + Run 2000m","Workout 8 rounds RPE 8: Run 800m, Burpee Broad Jumps 20x, Rest 90sec","Cool-down: Easy run 10min (barefoot if possible)"]},
+      {label:"Session 3",focus:"Wall Balls + SkiErg",exercises:["Warm-up: SkiErg 2000m + Row 2000m (RPE 4→6)","Workout 10 rounds: Wall Balls 40x, Burpee Broad Jumps 15x, SkiErg 200m, Rest 90sec (Rds 1-2 RPE5, Rds 3-9 RPE7, Rd 10 RPE9)","Finisher: Wall Balls 100x","Cool-down: Easy run 3000m"]},
+      {label:"Session 4",focus:"Endurance Run",exercises:["Warm-up: Active mobility 10min","Workout RPE 4: Run 80min OR Ski/Row 10min + Run 60min + Ski/Row 10min","Cool-down: Stretching & mobility"]},
+    ]},
+    { range:"Week 2", block:"Volume Build", method:"Intervals + Tempo runs. RPE 7-8 for main sets. Descending ladder for Thrusters/Wall Balls.", days:[
+      {label:"Session 1",focus:"Mixed Circuit",exercises:["Warm-up 3 rounds RPE 5: SkiErg 500m, KB Deadlifts 15x, Pushups 10x, Burpees 10x","Workout 5 rounds RPE 7-8: Bike 4min, Sled Pull 2min, Run WK-Tempo 1min, Lunges 2min, Run WK-Tempo 3min, Rest 2min","Cool-down: Easy row 10min"]},
+      {label:"Session 2",focus:"Farmer's Carry + Run",exercises:["Warm-up: Active mobility 10min","Workout 3 rounds RPE 8: Farmer's Carry 200m, Run WK-Tempo 3000m, Rest 4min","Cool-down: Stretching 10min"]},
+      {label:"Session 3",focus:"Thrusters + Wall Balls",exercises:["Warm-up RPE 5: Row 15min + Run 15min + SkiErg 15min","Workout descending ladder RPE 7-8: Thrusters 20x → Wall Balls 20x, 18x→18x, 16x→16x, 14x→14x, 12x→12x (F:15kg / M:20kg bar)","Finisher: Run RPE7 2000m","Cool-down: Easy run 3000m"]},
+      {label:"Session 4",focus:"Row + Burpees + Lunges",exercises:["Warm-up 3 rounds: Run 500m, Pushups 10x, Burpees 10x, Air Squats 10x","Workout 6 rounds RPE 7: Row 500m (300m easy/200m fast), Burpee Broad Jumps 20x, Run WK-Tempo 500m, Lunges 20x","Finisher: Run WK-Tempo 3000m","Cool-down: Easy run 10min"]},
+    ]},
+    { range:"Week 3", block:"Intensity Increase", method:"Pyramid sets + progressive run. Push pace on shorter distances. 90sec rest after each run interval.", days:[
+      {label:"Session 1",focus:"Sled + Bike + Run",exercises:["Warm-up: Active mobility 10min","Workout 8 rounds: Sled Push 40m, Bike 3min, Run WK-Tempo 2min, Rest 90sec (Rds 1-2 RPE5, Rds 3-7 RPE7, Rd 8 RPE8-9)","Cool-down: Stretching & mobility"]},
+      {label:"Session 2",focus:"Progressive Run 10km",exercises:["Warm-up: Active mobility 10min","Workout: Run 10km progressively RPE4→10 (increase every 2km, last 2km all out!)","Cool-down: Easy SkiErg 3000m"]},
+      {label:"Session 3",focus:"Row + Wall Balls Pyramid",exercises:["Warm-up RPE 5: Run 2000m + Row 1000m","Workout Pyramid RPE 7-8: Row 100m→WB 10x, 200m→12x, 300m→13x, 400m→14x, 500m→15x, 600m→16x, back down to 100m→10x","Cool-down: Bike 10min + Mobility 10-15min"]},
+      {label:"Session 4",focus:"Run Pyramid",exercises:["Warm-up: Active mobility 10-20min","Workout Pyramid RPE 7-8 (90sec rest after each): Run 200m, 400m, 600m, 800m, 1000m, 800m, 600m, 400m, 200m","Cool-down: Easy run 2000m"]},
+    ]},
+    { range:"Week 4", block:"Race Simulation Elements", method:"Descending-ascending ladder. Wall Balls volume. Race-pace focus.", days:[
+      {label:"Session 1",focus:"Ski + Sled + Wall Balls",exercises:["Warm-up: Run RPE4 5min + Bike RPE4 5min + Run RPE6 5min + Bike RPE6 5min","Workout RPE 7-8 ladder: Ski 500m→Sled Push 50m→Run 500m→WB 10x, 400m→40m→400m→15x, 300m→30m→300m→20x, 200m→20m→200m→30x","Cool-down: Easy row 10min"]},
+      {label:"Session 2",focus:"Base Endurance Run",exercises:["Warm-up: Run 2000m RPE4","Workout RPE 5: Grundlagenlauf (base run) 12km","Cool-down: Stretching & mobility 10-20min"]},
+      {label:"Session 3",focus:"Wall Balls + KB + Run",exercises:["Warm-up 3 rounds: Air Squats 6x, Pushups 5x, Box Jumps 5x, Pull-ups 3x","Workout: 10 rounds every 80sec — Wall Balls 10x + Air Squats 20x, Rest 3min, then KB Swings 14x→Pushups 14x, 10x→10x, 14x→14x, 10x→100 Pushups RPE8","Finisher: Bike 1000m + Run 1000m RPE 7-8","Cool-down: Easy run 10min"]},
+      {label:"Session 4",focus:"Lunges + Run Intervals",exercises:["Warm-up: Run 2000m with tempo variations","Workout 6 rounds RPE 8: Lunges 30x, Run 1000m, Burpee Broad Jumps 10x, Rest 90sec","Cool-down: Easy run 3000m (half barefoot if possible)"]},
+    ]},
+    { range:"Week 5", block:"Peak Volume", method:"High volume running with functional strength. Two 5km runs at different intensities.", days:[
+      {label:"Session 1",focus:"Bike + Lunges + Run",exercises:["Warm-up: Bike RPE4 30min + Run RPE6 2000m","Workout 4 rounds: Run RPE5 200m, Lunges 20x, Run RPE8 200m","Cool-down: Stretching & mobility 15min"]},
+      {label:"Session 2",focus:"Sled Pull Circuit",exercises:["Warm-up RPE5: SkiErg 10min + Sled Pull progressive (start 20kg, add 20kg each run until race weight)","Workout 8 rounds RPE8: Sled Pull 12.5m, Burpee Broad Jumps 12.5m, Lunges 12.5m, Run WK-Tempo 1min, Rest 90sec","Cool-down: Bike easy 15min"]},
+      {label:"Session 3",focus:"Double 5km Run",exercises:["Warm-up: SkiErg RPE4 3000m","Workout: Run RPE6 5000m, Rest 4min, Run RPE8 5000m","Cool-down: Row 2000m + Stretching 15min"]},
+    ]},
+    { range:"Week 6", block:"Race-Specific Training", method:"All Hyrox stations combined. Lunge-run combo. Tempo endurance run.", days:[
+      {label:"Session 1",focus:"Full Station Circuit",exercises:["Warm-up: SkiErg 2500m + Row 2500m (alternating 500m RPE4/500m RPE6)","Workout 8 rounds RPE7-8: Run WK-Tempo 1min, Burpee Broad Jumps 1min, Farmer's Carry 1min, Wall Balls unbroken 1min, Rest 1min","Cool-down: Easy run 5000m (2000m barefoot)"]},
+      {label:"Session 2",focus:"10km Lunge-Run",exercises:["Warm-up: Bike RPE4 20min + Bike RPE7 10min (direct transition to workout!)","Workout: 10km total — Lunges RPE8 40m + Run RPE7-8 200m + Run RPE5 760m (repeat)","Cool-down: Bike easy 15min"]},
+      {label:"Session 3",focus:"Row + Sled + Wall Balls",exercises:["Warm-up 3 rounds RPE5: Run 3min, Pushups 20x, Air Squats 10x, KB Swings 20x","Workout 5 rounds RPE7-8: Row 2min, Sled Push 2 lanes (25m), Run WK-Tempo 1min, Wall Balls 3x15 (10sec rest between sets) = 45x","Cool-down: Stretching 15min"]},
+      {label:"Session 4",focus:"Tempo Run 12km",exercises:["Warm-up: Running drills (Lauf-ABC) 10-15min","Workout RPE7-8: Tempo endurance run 12km","Cool-down: Stretching 15min"]},
+    ]},
+    { range:"Week 7", block:"Peak Week — Little Hyrox", method:"High intensity, race simulation. Session 5 is a full Little Hyrox test. Pyramid workouts.", days:[
+      {label:"Session 1",focus:"Row + KB + Farmer's Carry",exercises:["Warm-up: Row 500m + KB Deadlifts 12x + Farmer's Carry 80m (straight into workout)","Workout 5 rounds RPE7 (no rest): Row 500m, Double KB Deadlifts 12x, Farmer's Carry 80m","Finisher: Run RPE5 4000m","Cool-down: Stretching 15min"]},
+      {label:"Session 2",focus:"Run + Box Jumps",exercises:["Warm-up: Running drills 10min + jump series","Workout 15 rounds RPE6-7 (no rest): Run 400m, Box Jumps 20x","Cool-down: Stretching 15min"]},
+      {label:"Session 3",focus:"SkiErg + Wall Balls Pyramid",exercises:["Warm-up RPE5: Run 2000m","Workout Pyramid RPE7-8: Ski 100m→WB 10x, 200m→12x, 300m→13x, 400m→14x, 500m→15x, 600m→16x, back down to 100m→10x","Cool-down: Easy run 3000m + Mobility 10-15min"]},
+      {label:"Session 4",focus:"Run Pyramid",exercises:["Warm-up: Lauf-ABC + acceleration runs 15min","Workout Pyramid RPE7-8 (90sec rest): Run 200m, 400m, 600m, 800m, 1000m, 800m, 600m, 400m, 200m","Cool-down: Easy run 2000m (barefoot)"]},
+      {label:"Session 5 — Little Hyrox",focus:"Race Simulation",exercises:["2 rounds (Rd1 RPE6-7, Rd2 RPE8, Wall Balls RPE9)","SkiErg 300m → Run 500m","Sled Push 25m → Run 500m","Sled Push 25m → Run 500m","Farmer's Carry 100m → Run 500m","Burpee Broad Jumps 30x → Lunges 30x","Run 500m → Wall Balls 50x","Cool-down: Easy ergometer 2000m + Mobility 15min"]},
+    ]},
+    { range:"Week 8", block:"Tapering — Race Week", method:"Reduce volume, keep intensity short. Wed-Thu active recovery only. Friday: activation session. Saturday: RACE DAY!", days:[
+      {label:"Monday — Session 1",focus:"Moderate Strength",exercises:["Warm-up: 3000m Ergometer (1000m RPE4, 1000m RPE6, 1000m RPE8)","Workout 4 rounds RPE7: Row 500m, Double KB Deadlifts 12x (race weight+), Farmer's Carry 40m","Cool-down: Stretching 15min"]},
+      {label:"Tuesday — Session 2",focus:"Short Power",exercises:["Warm-up: Run 3000m","Workout 4 rounds: Burpee Broad Jumps 20x RPE7-8, Sprint 200m RPE7-8, Rest 90sec","Cool-down: Easy run 2000m (barefoot) + Mobility 20min"]},
+      {label:"Wed + Thu",focus:"Active Recovery",exercises:["Easy run, cycling or swimming at RPE 2-3","Keep moving, no intensity","Focus on sleep and nutrition"]},
+      {label:"Friday — Activation",focus:"Pre-Race Activation",exercises:["Warm-up RPE4: SkiErg 1000m + Run 1000m + Row 1000m","3 rounds: Lunges 10x (no weight), Sprint 200m easy but fast","Cool-down: Easy run 1000m + mobility"]},
+      {label:"Saturday — RACE DAY",focus:"Hyrox Race",exercises:["8x 1km Run interspersed with 8 stations:","1. SkiErg 1000m","2. Sled Push 50m","3. Sled Pull 50m","4. Burpee Broad Jumps 80m","5. Row 1000m","6. Farmer's Carry 200m","7. Sandbag Lunges 100m","8. Wall Balls 100x","Average finish time: 60-90 min"]},
+    ]},
+  ]
+};
+
+
 const METHOD_EXPLAINERS = {
-  "Step Intervals": "Do 1 rep, rest, 2 reps, rest, 3 reps... climb until you'd fail the next step, then count back down. Rest time = same duration as the set you just did. Spend 7.5 minutes per exercise. Focus on perfect form — high reps at low intensity.",
+  "Step Intervals": "Do 1 rep, rest, 2 reps, rest, 3 reps... climb until you would fail the next step, then count back down. Rest time = same duration as the set you just did. Spend 7.5 minutes per exercise. Focus on perfect form — high reps at low intensity.",
   "Interval Sets (3x6-12 reps, 3 min intervals)": "3 sets per exercise, 3-minute intervals. Start your set at 0 min — do 6–12 reps to near-failure, then rest for the remainder of the 3 minutes. Second set starts at 3 min, third at 6 min. Next exercise starts at 9 min. At least one set per exercise should reach near-failure at 6–12 reps.",
   "Interval Sets (3×6–12 reps, 3 min intervals)": "3 sets per exercise, 3-minute intervals. Start your set at 0 min — do 6–12 reps to near-failure, then rest for the remainder of the 3 minutes. Second set starts at 3 min, third at 6 min. Next exercise starts at 9 min. At least one set per exercise should reach near-failure at 6–12 reps.",
   "Supersets (4 min intervals, 3 pairs/day)": "3 exercise pairs per session. Each pair = 2 exercises done back-to-back. Exercise 1: 1–5 reps, slow controlled movement (2–3s negative, 1s explosive). Exercise 2: 6–12 reps as fast as possible with good form. 4-minute intervals — 6 total sets per session. Do NOT go to failure on Exercise 1.",
@@ -612,47 +702,82 @@ const FOCUS_COLOR = {
 };
 
 function renderPlan(){
-  const level = S.planLevel || "First Class";
-  const prog = PROGRAMS[level];
-  const levels = Object.keys(PROGRAMS);
-  let html = "<div class=\"scroll\">";
-  html += "<div style=\"display:flex;gap:6px;margin-bottom:16px\">";
-  levels.forEach(function(l){
-    html += "<button class=\"chip "+(level===l?"active":"")+"\" onclick=\"ss({planLevel:'"+l+"'})\">"+l+"</button>";
-  });
-  html += "</div>";
-  html += "<div style=\"background:var(--bg2);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--text2)\">";
-  html += "<strong style=\"color:var(--text)\">10-week program</strong> &middot; 4&ndash;5 days/week &middot; 20&ndash;30 min/session.<br>Complete one full cycle, rest 1&ndash;2 weeks, then repeat at a harder level.";
-  html += "</div>";
-  prog.weeks.forEach(function(w){
-    html += "<div style=\"margin-bottom:20px\">";
-    html += "<div style=\"display:flex;align-items:center;gap:10px;margin-bottom:10px\">";
-    html += "<div style=\"font-size:13px;font-weight:700;color:var(--text)\">"+w.range+"</div>";
-    html += "<div style=\"font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--bg2);color:var(--text2)\">"+w.block+"</div>";
-    html += "</div>";
-    html += "<div style=\"font-size:12px;color:var(--text2);margin-bottom:10px;padding:8px 12px;background:var(--bg2);border-radius:10px;line-height:1.5\">";
-    html += "<strong style=\"color:var(--text)\">Method:</strong> "+(METHOD_EXPLAINERS[w.method]||w.method);
-    html += "</div>";
-    w.days.forEach(function(d){
-      html += "<div class=\"card\" style=\"margin-bottom:7px\">";
-      html += "<div style=\"display:flex;align-items:center;justify-content:space-between;margin-bottom:8px\">";
-      html += "<div style=\"display:flex;align-items:center;gap:8px\">";
-      html += "<span style=\"font-size:13px;font-weight:700\">"+d.label+"</span>";
-      html += "<span class=\"tag "+(FOCUS_COLOR[d.focus]||"t-neu")+"\">"+d.focus+"</span>";
-      html += "</div>";
-      html += "<button onclick=\"startPlanWorkout('"+encodeURIComponent(JSON.stringify(d))+"')\" style=\"padding:5px 11px;border-radius:20px;border:1px solid var(--border2);background:var(--text);color:var(--bg);font-size:11px;font-weight:600;cursor:pointer\">Start</button>";
-      html += "</div>";
-      html += "<div style=\"display:flex;flex-direction:column;gap:4px\">";
-      d.exercises.forEach(function(e){
-        html += "<div style=\"font-size:13px;color:var(--text2);padding-left:4px;line-height:1.4\">"+e+"</div>";
+  const{activeProgram,planLevel}=S;
+  let html="<div class=\"scroll\">";
+  html+="<div style=\"display:flex;gap:6px;margin-bottom:14px\">";
+  html+="<button class=\"chip "+(activeProgram==="YAYOG"?"active":"")+"\" onclick=\"ss({activeProgram:'YAYOG'})\">YAYOG</button>";
+  html+="<button class=\"chip "+(activeProgram==="HYROX"?"active":"")+"\" onclick=\"ss({activeProgram:'HYROX'})\">Hyrox</button>";
+  html+="</div>";
+  if(activeProgram==="HYROX"){
+    html+="<div style=\"background:var(--bg2);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--text2)\">";
+    html+="<strong style=\"color:var(--text)\">8-week Hyrox prep</strong> by Luke Storath (first Hyrox World Champion). 3–5 sessions/week. Start 8 weeks before your race.<br><br>";
+    html+="<strong style=\"color:var(--text)\">RPE:</strong> 1=easy · 4-6=moderate · 7-8=intense · 9=very hard · 10=max<br>";
+    html+="<strong style=\"color:var(--text)\">WK-Tempo</strong> = your target race pace (min/km)";
+    html+="</div>";
+    HYROX_PROGRAM.weeks.forEach(function(w){
+      html+="<div style=\"margin-bottom:20px\">";
+      html+="<div style=\"display:flex;align-items:center;gap:10px;margin-bottom:10px\">";
+      html+="<div style=\"font-size:13px;font-weight:700;color:var(--text)\">"+w.range+"</div>";
+      html+="<div style=\"font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--bg2);color:var(--text2)\">"+w.block+"</div>";
+      html+="</div>";
+      html+="<div style=\"font-size:12px;color:var(--text2);margin-bottom:10px;padding:8px 12px;background:var(--bg2);border-radius:10px;line-height:1.5\">";
+      html+="<strong style=\"color:var(--text)\">Structure:</strong> "+w.method;
+      html+="</div>";
+      w.days.forEach(function(d){
+        var isRace=d.label.includes("RACE")||d.label.includes("Little");
+        var isRest=d.label.includes("Wed");
+        html+="<div class=\"card\" style=\"margin-bottom:7px\">";
+        html+="<div style=\"display:flex;align-items:center;justify-content:space-between;margin-bottom:8px\">";
+        html+="<div style=\"display:flex;align-items:center;gap:8px\">";
+        html+="<span style=\"font-size:13px;font-weight:700\">"+d.label+"</span>";
+        html+="<span class=\"tag t-bjj\">"+d.focus+"</span>";
+        html+="</div>";
+        if(!isRest&&!d.label.includes("RACE DAY"))html+="<button onclick=\"startPlanWorkout('"+encodeURIComponent(JSON.stringify(d))+"')\" style=\"padding:5px 11px;border-radius:20px;border:1px solid var(--border2);background:var(--text);color:var(--bg);font-size:11px;font-weight:600;cursor:pointer\">Start</button>";
+        html+="</div>";
+        html+="<div style=\"display:flex;flex-direction:column;gap:4px\">";
+        d.exercises.forEach(function(e){html+="<div style=\"font-size:13px;color:var(--text2);padding-left:4px;line-height:1.5\">"+e+"</div>";});
+        html+="</div></div>";
       });
-      html += "</div></div>";
+      html+="</div>";
     });
-    html += "</div>";
-  });
-  html += "</div>";
+  } else {
+    const prog=PROGRAMS[planLevel||"Basis"];
+    const levels=Object.keys(PROGRAMS);
+    html+="<div style=\"display:flex;gap:6px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px\">";
+    levels.forEach(function(l){html+="<button class=\"chip "+(planLevel===l?"active":"")+"\" onclick=\"ss({planLevel:'"+l+"'})\">"+l+"</button>";});
+    html+="</div>";
+    html+="<div style=\"background:var(--bg2);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--text2)\">";
+    html+="<strong style=\"color:var(--text)\">10-week program</strong> &middot; 4–5 days/week &middot; 20–30 min/session.<br>Complete one full cycle, rest 1–2 weeks, then repeat at a harder level.";
+    html+="</div>";
+    prog.weeks.forEach(function(w){
+      html+="<div style=\"margin-bottom:20px\">";
+      html+="<div style=\"display:flex;align-items:center;gap:10px;margin-bottom:10px\">";
+      html+="<div style=\"font-size:13px;font-weight:700;color:var(--text)\">"+w.range+"</div>";
+      html+="<div style=\"font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--bg2);color:var(--text2)\">"+w.block+"</div>";
+      html+="</div>";
+      html+="<div style=\"font-size:12px;color:var(--text2);margin-bottom:10px;padding:8px 12px;background:var(--bg2);border-radius:10px;line-height:1.5\">";
+      html+="<strong style=\"color:var(--text)\">Method:</strong> "+(METHOD_EXPLAINERS[w.method]||w.method);
+      html+="</div>";
+      w.days.forEach(function(d){
+        html+="<div class=\"card\" style=\"margin-bottom:7px\">";
+        html+="<div style=\"display:flex;align-items:center;justify-content:space-between;margin-bottom:8px\">";
+        html+="<div style=\"display:flex;align-items:center;gap:8px\">";
+        html+="<span style=\"font-size:13px;font-weight:700\">"+d.label+"</span>";
+        html+="<span class=\"tag "+(FOCUS_COLOR[d.focus]||"t-neu")+"\" >"+d.focus+"</span>";
+        html+="</div>";
+        html+="<button onclick=\"startPlanWorkout('"+encodeURIComponent(JSON.stringify(d))+"')\" style=\"padding:5px 11px;border-radius:20px;border:1px solid var(--border2);background:var(--text);color:var(--bg);font-size:11px;font-weight:600;cursor:pointer\">Start</button>";
+        html+="</div>";
+        html+="<div style=\"display:flex;flex-direction:column;gap:4px\">";
+        d.exercises.forEach(function(e){html+="<div style=\"font-size:13px;color:var(--text2);padding-left:4px;line-height:1.4\">"+e+"</div>";});
+        html+="</div></div>";
+      });
+      html+="</div>";
+    });
+  }
+  html+="</div>";
   return html;
 }
+
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
 render();
